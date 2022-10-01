@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class TheHero : MonoBehaviour
+public class TheHero : NetworkBehaviour 
 {
+
     private float moveSpeed = 8f;
     private float jumpForce = 20f;
     private float horizontal;
@@ -22,11 +24,13 @@ public class TheHero : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+      if(IsOwner) {
+
         horizontal = Input.GetAxisRaw("Horizontal");
         Flip();
 
         
-        if (Input.GetButtonDown("Jump") && isGrounded())
+        if (Input.GetButtonDown("space") && isGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
@@ -35,17 +39,23 @@ public class TheHero : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
-    }
+
+      }
+   }
+
 
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
     }
 
+
     private bool isGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
+
+
     private void Flip()
     {
         if(isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
