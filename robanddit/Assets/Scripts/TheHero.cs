@@ -14,31 +14,35 @@ public class TheHero : NetworkBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Rigidbody2D rb;
-
-   // Start is called before the first frame update
+  
+    // Start is called before the first frame update
     private void Start()
-    {
-        
+    {     
+
     }
 
     // Update is called once per frame
     private void Update()
     {
-      if(IsOwner) {
+        // Stuff breaks when trying to destroy script in non-owner clients, for now keep IsOwner here
+        if(IsOwner) { 
 
-        horizontal = Input.GetAxisRaw("Horizontal");
-        Flip();
+           horizontal = Input.GetAxisRaw("Horizontal");
+           Flip();
+           
+           if (Input.GetButtonDown("Jump") && isGrounded())
+           {
+               Debug.Log("hi");
+               rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+           }
+   
+           if(Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+           {
+               rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+           }
 
-        
-        if (Input.GetButtonDown("space") && isGrounded())
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
 
-        if(Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-        }
+
 
       }
    }
@@ -52,7 +56,7 @@ public class TheHero : NetworkBehaviour
 
     private bool isGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+       return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
 
@@ -67,7 +71,4 @@ public class TheHero : NetworkBehaviour
 
         }
     }
-
-
-
 }

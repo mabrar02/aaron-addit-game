@@ -13,9 +13,7 @@ public class WorldManager : MonoBehaviour
         else
         {
             StatusLabels();
-
         }
-
         GUILayout.EndArea();
     }
 
@@ -23,7 +21,6 @@ public class WorldManager : MonoBehaviour
     {
         if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
         if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
-        if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }
 
     static void StatusLabels()

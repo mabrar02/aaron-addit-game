@@ -2,15 +2,15 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
-/[Uu]ser[Ss]ettings/
-/[Rr]ecordings/
+robanddit/[Ll]ibrary/
+robanddit/[Tt]emp/
+robanddit/[Oo]bj/
+robanddit/[Bb]uild/
+robanddit/[Bb]uilds/
+robanddit/[Ll]ogs/
+robanddit/[Mm]emoryCaptures/
+robanddit/[Uu]ser[Ss]ettings/
+robanddit/[Rr]ecordings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -61,3 +61,4 @@ sysinfo.txt
 crashlytics-build.properties
 
 *.swp
+/robanddit_clone_0/*
