@@ -3,27 +3,39 @@ using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
+    private int inGame = 0;
+    private int isHost = 0;
+    private int isClient = 0;
+    private int connecting = 0;
+    public string JoinCode = "";
+    public GameObject RelayManager;
+
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer && isHost == 0 && isClient == 0)
         {
             StartButtons();
         }
-        else
-        {
+        else if (inGame == 0) {
             StatusLabels();
+            SetupAllocation();
+        } 
+        else {     
+
+            StatusLabels();
+
         }
         GUILayout.EndArea();
     }
 
-    static void StartButtons()
+    void StartButtons()
     {
-        if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
-        if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
+        if (GUILayout.Button("Host")) isHost = 1;
+        if (GUILayout.Button("Client")) isClient = 1;
     }
 
-    static void StatusLabels()
+    void StatusLabels()
     {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
@@ -31,7 +43,33 @@ public class WorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
+        GUILayout.Label("Join code: " + JoinCode);
     }
 
-}
+    public void SetupAllocation() {
+        if (isHost == 1 && connecting == 0) {
+            RelayManager.SendMessage("SetupRelay");
+            inGame = 1;
+        } else if (isClient == 1) {
+            GUILayout.Label("Enter join code: ");
+            JoinCode = GUILayout.TextField(JoinCode);
+            if (GUILayout.Button("Join")) {
+                JoinGame(JoinCode);
+                inGame = 1;
+            }
+        }
+    }
 
+    public void AttemptingToConnect(int x) {
+        connecting = x;
+    }
+
+    public void SetCode(string Code) {
+        JoinCode = Code;
+    }
+
+
+    public void JoinGame(string Code) {
+        RelayManager.SendMessage("JoinGame", Code);
+    }
+}
