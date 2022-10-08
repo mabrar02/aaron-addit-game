@@ -861,7 +861,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1184337753192775723, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
       propertyPath: coyoteTime
-      value: 0.25
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1184337753192775723, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
       propertyPath: jumpBuffer
