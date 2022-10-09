@@ -27,6 +27,7 @@ public class RelayManager : NetworkBehaviour
         
     }
 
+
     // Update is called once per frame
     void Update()
     {
@@ -37,11 +38,11 @@ public class RelayManager : NetworkBehaviour
        try {
            WorldManager.SendMessage("AttemptingToConnect", 1);      
 
-           allocation = await RelayService.Instance.CreateAllocationAsync(2); 
+           allocation = await RelayService.Instance.CreateAllocationAsync(4); 
 
            GameJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId); 
 
-           var dtlsEndpoint = allocation.ServerEndpoints.First();
+           var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
 
            var (ipv4address, port, allocationIdBytes, connectionData, key) = (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.Key);
 
@@ -63,17 +64,19 @@ public class RelayManager : NetworkBehaviour
        try {
         JoinAllocation = await RelayService.Instance.JoinAllocationAsync(Code); 
 
-        var dtlsEndpoint = JoinAllocation.ServerEndpoints.First();
+        var dtlsEndpoint = JoinAllocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
 
         var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, JoinAllocation.AllocationIdBytes, JoinAllocation.ConnectionData, JoinAllocation.HostConnectionData, JoinAllocation.Key);
-
+            
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData, true);
-
-        NetworkManager.Singleton.StartClient();
         } catch {
             Debug.Log("Error in connecting to host");
         }
 
+
+
+
+        NetworkManager.Singleton.StartClient();
     }
 
 

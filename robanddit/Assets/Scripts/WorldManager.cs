@@ -7,8 +7,11 @@ public class WorldManager : MonoBehaviour
     private int isHost = 0;
     private int isClient = 0;
     private int connecting = 0;
+    private int proset = 0;
+    public string profile = "";
     public string JoinCode = "";
     public GameObject RelayManager;
+    public GameObject AuthenticationManager;
 
     void OnGUI()
     {
@@ -42,6 +45,8 @@ public class WorldManager : MonoBehaviour
 
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
+        GUILayout.Label("Profile: " + profile);
+
         GUILayout.Label("Mode: " + mode);
         GUILayout.Label("Join code: " + JoinCode);
     }
@@ -53,11 +58,19 @@ public class WorldManager : MonoBehaviour
         } else if (isClient == 1) {
             GUILayout.Label("Enter join code: ");
             JoinCode = GUILayout.TextField(JoinCode);
+            if(proset == 0) {
+                AuthenticationManager.SendMessage("SwitchProfiles", "prof2");
+                proset = 1;
+            }
             if (GUILayout.Button("Join")) {
                 JoinGame(JoinCode);
                 inGame = 1;
             }
         }
+    }
+
+    public void SetProfile(string x) {
+        profile = x;
     }
 
     public void AttemptingToConnect(int x) {
