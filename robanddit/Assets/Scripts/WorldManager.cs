@@ -16,24 +16,25 @@ public class WorldManager : MonoBehaviour
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer && isHost != 1 && isClient != 1)
         {
             StartButtons();
         }
         else
         {
             StatusLabels();
+            SetupAllocation();
         }
         GUILayout.EndArea();
     }
 
-    static void StartButtons()
+    void StartButtons()
     {
-        if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
-        if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
+        if (GUILayout.Button("Host")) isHost = 1;
+        if (GUILayout.Button("Client")) isClient = 1;
     }
 
-    static void StatusLabels()
+    void StatusLabels()
     {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
@@ -43,6 +44,7 @@ public class WorldManager : MonoBehaviour
         GUILayout.Label("Profile: " + profile);
 
         GUILayout.Label("Mode: " + mode);
+        GUILayout.Label("Join Code: " + JoinCode);
     }
 
     public void SetupAllocation() {
