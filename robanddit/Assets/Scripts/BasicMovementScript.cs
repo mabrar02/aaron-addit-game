@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class BasicMovementScript : NetworkBehaviour 
+public class BasicMovementScript : MonoBehaviour //NetworkBehaviour 
 {
     #region VARIABLES
     [Header("Run Variables")]
