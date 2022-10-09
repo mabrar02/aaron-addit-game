@@ -16,29 +16,24 @@ public class WorldManager : MonoBehaviour
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer && isHost == 0 && isClient == 0)
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
             StartButtons();
         }
-        else if (inGame == 0) {
+        else
+        {
             StatusLabels();
-            SetupAllocation();
-        } 
-        else {     
-
-            StatusLabels();
-
         }
         GUILayout.EndArea();
     }
 
-    void StartButtons()
+    static void StartButtons()
     {
-        if (GUILayout.Button("Host")) isHost = 1;
-        if (GUILayout.Button("Client")) isClient = 1;
+        if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
+        if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
     }
 
-    void StatusLabels()
+    static void StatusLabels()
     {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
@@ -48,7 +43,6 @@ public class WorldManager : MonoBehaviour
         GUILayout.Label("Profile: " + profile);
 
         GUILayout.Label("Mode: " + mode);
-        GUILayout.Label("Join code: " + JoinCode);
     }
 
     public void SetupAllocation() {
@@ -86,3 +80,4 @@ public class WorldManager : MonoBehaviour
         RelayManager.SendMessage("JoinGame", Code);
     }
 }
+
