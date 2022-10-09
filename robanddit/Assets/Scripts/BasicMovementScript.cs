@@ -28,6 +28,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.49f, 0.03f);
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Rigidbody2D rb;
+    private Animator anim;
 
 
     //States
@@ -46,7 +47,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         gravityScale = rb.gravityScale;
@@ -54,6 +55,11 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
 
     // Update is called once per frame
     private void Update() {
+
+        //Animation
+        anim.SetBool("isGrounded", lastOnGroundTime > 0);
+        anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
+
 
         horizontalDir = getInput().x;
         verticalDir = getInput().y;
