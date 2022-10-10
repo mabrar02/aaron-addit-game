@@ -56,12 +56,12 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     // Update is called once per frame
     private void Update() {
 
-        //Animation
+        #region ANIMATION
         anim.SetBool("isGrounded", lastOnGroundTime > 0);
         anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
         anim.SetBool("isJumping", isJumping);
         anim.SetBool("isFalling", isJumpFalling);
-
+        #endregion
 
         horizontalDir = getInput().x;
         verticalDir = getInput().y;

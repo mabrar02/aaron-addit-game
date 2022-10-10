@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c3d288e98039fc947b6088b061e02ea1
+guid: dd284440f69034846ac0a656de5254c7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -117,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: JumpRobby_0
+      name: BetterJumpRobby_0
       rect:
         serializedVersion: 2
         x: 37
-        y: 8
+        y: 3
         width: 178
-        height: 242
+        height: 239
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 189e70d45384bb640978f5935ff35ebb
-      internalID: -1328762787
+      spriteID: 46f691ed8370e58468459f143da77a7e
+      internalID: -1884912735
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: JumpRobby_1
+      name: BetterJumpRobby_1
       rect:
         serializedVersion: 2
         x: 267
-        y: 8
+        y: 3
         width: 178
-        height: 242
+        height: 239
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -152,8 +152,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4d0f4ff14a3943b4b92ca732cd40071f
-      internalID: 1966608227
+      spriteID: b7b1f08a5f622d74b990f7a81630d77c
+      internalID: -1214144156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BetterJumpRobby_2
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 3
+        width: 178
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19e526ecac23c814abe00a99ed8e8c3e
+      internalID: 1573898115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BetterJumpRobby_3
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 3
+        width: 178
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb77ffda334d93e4ebad97e44bc4ee4b
+      internalID: 1233483223
       vertices: []
       indices: 
       edges: []
@@ -169,8 +211,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      JumpRobby_1: 1966608227
-      JumpRobby_0: -1328762787
+      BetterJumpRobby_0: -1884912735
+      BetterJumpRobby_1: -1214144156
+      BetterJumpRobby_2: 1573898115
+      BetterJumpRobby_3: 1233483223
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
