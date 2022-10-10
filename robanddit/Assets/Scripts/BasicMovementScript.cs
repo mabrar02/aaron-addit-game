@@ -117,24 +117,20 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
         }
 
 
-        if (isJumpCut) {
-
+        if (isJumpFalling && verticalDir > 0) {
+            setGravityScale(gravityScale * floatGravityMult);
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
+        }
+        else if (isJumpCut) {
             setGravityScale(gravityScale * jumpCutGravityMult);
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-
         }
         else if (isJumping) {
             setGravityScale(gravityScale);
         }
         else if(rb.velocity.y < 0) {
-            if (verticalDir > 0) {
-                setGravityScale(gravityScale * floatGravityMult);
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
-            }
-            else {
                 setGravityScale(gravityScale * fallGravityMult);
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-            }
         }
         else {
             setGravityScale(gravityScale);
