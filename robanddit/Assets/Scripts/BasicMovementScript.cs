@@ -59,6 +59,8 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
         //Animation
         anim.SetBool("isGrounded", lastOnGroundTime > 0);
         anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
+        anim.SetBool("isJumping", isJumping);
+        anim.SetBool("isFalling", isJumpFalling);
 
 
         horizontalDir = getInput().x;
