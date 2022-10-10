@@ -20,7 +20,9 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     [SerializeField] private float fallGravityMult;
     [SerializeField] public float coyoteTime;
     [SerializeField] private float maxFallSpeed;
+    [SerializeField] private float maxFloatSpeed;
     [SerializeField] private float jumpBuffer;
+    [SerializeField] private float floatGravityMult;
 
 
     [Header("Components")]
@@ -116,6 +118,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
 
 
         if (isJumpCut) {
+
             setGravityScale(gravityScale * jumpCutGravityMult);
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
 
@@ -124,8 +127,14 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
             setGravityScale(gravityScale);
         }
         else if(rb.velocity.y < 0) {
-            setGravityScale(gravityScale * fallGravityMult);
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+            if (verticalDir > 0) {
+                setGravityScale(gravityScale * floatGravityMult);
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
+            }
+            else {
+                setGravityScale(gravityScale * fallGravityMult);
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+            }
         }
         else {
             setGravityScale(gravityScale);
