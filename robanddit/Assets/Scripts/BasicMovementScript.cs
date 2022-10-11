@@ -165,9 +165,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
 
     private void orientCharacter(bool isMovingRight) {
         if(isMovingRight != isFacingRight) {
-            Vector3 scale = transform.localScale;
-            scale.x *= -1;
-            transform.localScale = scale;
+            transform.Rotate(0f, 180f, 0f);
             isFacingRight = !isFacingRight;
         }
     }

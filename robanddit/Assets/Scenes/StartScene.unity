@@ -868,6 +868,10 @@ PrefabInstance:
       propertyPath: floatGravityMult
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2864707583038569488, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
+      propertyPath: groundCheckSize.x
+      value: 1.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4096547708116352649, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
       propertyPath: m_Size.x
       value: 1.79
@@ -922,11 +926,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8181123744760302687, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.029
+      value: 0.195
       objectReference: {fileID: 0}
     - target: {fileID: 8181123744760302687, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.145
+      value: -1.13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1dc54fc2e35c37c4983abe7e3e6f91cd, type: 3}
