@@ -5,45 +5,50 @@ using UnityEngine;
 public class AbilityScript : MonoBehaviour
 {
 
-    Ray MouseRay = new Ray();
-    Vector3 MousePos = new Vector3();
-    Vector3 RelativeMousePos = new Vector3();
-    bool HitHauntable;
-    RaycastHit HitData; 
-    public LayerMask world; 
+    Vector2 mousePos = new Vector2();
+    Vector2 relativeMousePos = new Vector2();
+    RaycastHit2D hitData;
+    bool currentlyHaunting;
+
+
    
     // Start is called before the first frame update
     void Start()
     {
+        currentlyHaunting = false;
         
     }
 
+    void Update() {
+        if (Input.GetButtonDown("Fire1") && !currentlyHaunting) {
+            checkHaunt();
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
-        MousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RelativeMousePos = MousePos - transform.position;
-        MouseRay.origin = new Vector3(transform.position.x+3, transform.position.y+3, 0);
-        MouseRay.direction = new Vector3(RelativeMousePos.x, RelativeMousePos.y, 0);
-        
-        if(Physics.Raycast(MouseRay, out HitData, Mathf.Infinity, 3)) {
-
-        Debug.Log("hi");
-        }
-
-        if(Physics.Raycast(new Vector3(0,0,0), new Vector3(100,0,0), 1000, world)) {
-
-        Debug.Log("hiiii");
-        }
-        Debug.DrawRay(MouseRay.origin, MouseRay.direction*10, Color.red, 10, false);
-        Debug.DrawRay(new Vector3(0,0,0), new Vector3(1,0,0)*100, Color.blue, 10, false);
-//        Debug.Log("Origin : " + MouseRay.origin + " Direction: " + MouseRay.direction );
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        relativeMousePos = mousePos - (Vector2)transform.position;
+        hitData = Physics2D.Raycast(transform.position, relativeMousePos, 5);
 
     }
 
+    public void checkHaunt() {
+        if (hitData && hitData.collider.CompareTag("Hauntable")) {
+            Debug.Log(hitData.collider.gameObject.name);
+            var haunt = performHaunt(hitData.collider.gameObject);
+            StartCoroutine(performHaunt(hitData.collider.gameObject));
+        }
+    }
 
-
-
-
-
+    private IEnumerator performHaunt (GameObject hauntObject) {
+        Color originalColour = hauntObject.GetComponent<SpriteRenderer>().color;
+        hauntObject.GetComponent<SpriteRenderer>().color = Color.red;
+        hauntObject.tag = "Haunted";
+        currentlyHaunting = true;
+        yield return new WaitForSeconds(2f);
+        hauntObject.GetComponent<SpriteRenderer>().color = originalColour;
+        hauntObject.tag = "Hauntable";
+        currentlyHaunting = false;
+    }
 }
