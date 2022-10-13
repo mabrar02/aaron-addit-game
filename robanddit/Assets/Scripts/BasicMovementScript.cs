@@ -58,6 +58,21 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     // Update is called once per frame
     private void Update() {
 
+        BasicMovement(); 
+
+    }
+    
+    private void FixedUpdate()
+    {
+        Run();
+
+    }
+
+   
+    //----------------------------------------------------------
+    // Movement type methods
+    //----------------------------------------------------------
+    private void BasicMovement() {
         #region ANIMATION
         anim.SetBool("isGrounded", lastOnGroundTime > 0);
         anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
@@ -113,9 +128,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
             isJumpCut = false;
             isJumpFalling = false;
             Jump();
-
         }
-
 
         if (isJumpFalling && verticalDir > 0) {
             setGravityScale(gravityScale * floatGravityMult);
@@ -136,48 +149,6 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
             setGravityScale(gravityScale);
         }
     }
-        private Vector2 getInput() {
-
-        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-    }
-
-
-
-    private void FixedUpdate()
-    {
-        Run();
-
-    }
-
-    private void setGravityScale(float scale) {
-        rb.gravityScale = scale;
-    }
-    private void Run() {
-        float targetSpeed = horizontalDir * moveSpeed;
-
-        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? accelAmount : deccelAmount;
-
-        float speedDif = targetSpeed - rb.velocity.x;
-        float movement = speedDif * accelRate;
-
-        rb.AddForce(movement * Vector2.right, ForceMode2D.Force);
-    }
-
-    private void orientCharacter(bool isMovingRight) {
-        if(isMovingRight != isFacingRight) {
-            transform.Rotate(0f, 180f, 0f);
-            isFacingRight = !isFacingRight;
-        }
-    }
-
-    public void jumpDownInput() {
-        lastJumpTime = jumpBuffer;
-    }
-    public void jumpUpInput() {
-        if (canJumpCut()) {
-            isJumpCut = true;
-        }
-    }
 
     private void Jump() {
         lastJumpTime = 0;
@@ -190,13 +161,57 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
         rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
     }
 
+    private void Run() {
+        float targetSpeed = horizontalDir * moveSpeed;
+
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? accelAmount : deccelAmount;
+
+        float speedDif = targetSpeed - rb.velocity.x;
+        float movement = speedDif * accelRate;
+
+        rb.AddForce(movement * Vector2.right, ForceMode2D.Force);
+    }
+
+
+    private void orientCharacter(bool isMovingRight) {
+        if(isMovingRight != isFacingRight) {
+            transform.Rotate(0f, 180f, 0f);
+            isFacingRight = !isFacingRight;
+        }
+    }
+
+    //----------------------------------------------------------
+    // Get and Set type methods
+    //----------------------------------------------------------
+    private void setGravityScale(float scale) {
+        rb.gravityScale = scale;
+    }
+
+    public void jumpDownInput() {
+        lastJumpTime = jumpBuffer;
+    }
+
+    public void jumpUpInput() {
+        if (canJumpCut()) {
+            isJumpCut = true;
+        }
+    }
+
+    private Vector2 getInput() {
+        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+    }
+
     private bool canJump() {
         return lastOnGroundTime > 0 && !isJumping;
     }
+
     private bool canJumpCut() {
         return isJumping && rb.velocity.y > 0;
     }
 
+    //----------------------------------------------------------
+    // Miscellaneous methods
+    //----------------------------------------------------------
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
