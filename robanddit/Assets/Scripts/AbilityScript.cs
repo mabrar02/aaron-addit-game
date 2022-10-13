@@ -5,10 +5,12 @@ using UnityEngine;
 public class AbilityScript : MonoBehaviour
 {
 
-    Vector2 mousePos = new Vector2();
-    Vector2 relativeMousePos = new Vector2();
-    RaycastHit2D hitData;
-    bool currentlyHaunting;
+    [SerializeField] private Vector2 hauntSize;
+    [SerializeField] private float hauntDistance;
+    private Vector2 mousePos = new Vector2();
+    private Vector2 relativeMousePos = new Vector2();
+    private RaycastHit2D hitData;
+    private bool currentlyHaunting;
 
 
    
@@ -20,7 +22,12 @@ public class AbilityScript : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetButtonDown("Fire1") && !currentlyHaunting) {
+        /*
+         * currentlyHaunting used to go from one haunt to another provided that distance is valid
+         * if not, you launch yourself via click or space
+         * 
+         */
+        if (Input.GetButtonDown("Fire1") && !currentlyHaunting && Vector2.Distance(transform.position,mousePos) <= hauntDistance) {
             checkHaunt();
         }
     }
@@ -34,14 +41,28 @@ public class AbilityScript : MonoBehaviour
     }
 
     public void checkHaunt() {
-        if (hitData && hitData.collider.CompareTag("Hauntable")) {
-            Debug.Log(hitData.collider.gameObject.name);
-            var haunt = performHaunt(hitData.collider.gameObject);
-            StartCoroutine(performHaunt(hitData.collider.gameObject));
+
+        Collider2D collision = Physics2D.OverlapBox(mousePos, hauntSize, 0);
+        if (collision && collision.CompareTag("Hauntable")) {
+            Debug.Log(collision.gameObject.name);
+            StartCoroutine(performHaunt(collision.gameObject));
         }
+
+        /*if (hitData && hitData.collider.CompareTag("Hauntable")) {
+            Debug.Log(hitData.collider.gameObject.name);
+            StartCoroutine(performHaunt(hitData.collider.gameObject));
+        }*/
+    }
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(mousePos, hauntSize);
     }
 
     private IEnumerator performHaunt (GameObject hauntObject) {
+        /*
+         * figure out dash/velocity shit
+         * 
+         */
         Color originalColour = hauntObject.GetComponent<SpriteRenderer>().color;
         hauntObject.GetComponent<SpriteRenderer>().color = Color.red;
         hauntObject.tag = "Haunted";

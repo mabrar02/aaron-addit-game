@@ -140,6 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d29ad1548c7ad245b09a795768b71af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hauntSize: {x: 1.5, y: 1.5}
+  hauntDistance: 7
 --- !u!1 &469388544
 GameObject:
   m_ObjectHideFlags: 0
