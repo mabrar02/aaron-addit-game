@@ -20,7 +20,9 @@ public class BasicMovementScript : NetworkBehaviour
     [SerializeField] private float fallGravityMult;
     [SerializeField] public float coyoteTime;
     [SerializeField] private float maxFallSpeed;
+    [SerializeField] private float maxFloatSpeed;
     [SerializeField] private float jumpBuffer;
+    [SerializeField] private float floatGravityMult;
 
 
     [Header("Components")]
@@ -28,6 +30,7 @@ public class BasicMovementScript : NetworkBehaviour
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.49f, 0.03f);
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Rigidbody2D rb;
+    private Animator anim;
 
 
     //States
@@ -46,7 +49,7 @@ public class BasicMovementScript : NetworkBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         gravityScale = rb.gravityScale;
@@ -54,6 +57,28 @@ public class BasicMovementScript : NetworkBehaviour
 
     // Update is called once per frame
     private void Update() {
+
+        BasicMovement(); 
+
+    }
+    
+    private void FixedUpdate()
+    {
+        Run();
+
+    }
+
+   
+    //----------------------------------------------------------
+    // Movement type methods
+    //----------------------------------------------------------
+    private void BasicMovement() {
+        #region ANIMATION
+        anim.SetBool("isGrounded", lastOnGroundTime > 0);
+        anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
+        anim.SetBool("isJumping", isJumping);
+        anim.SetBool("isFalling", isJumpFalling);
+        #endregion
 
         horizontalDir = getInput().x;
         verticalDir = getInput().y;
@@ -103,68 +128,25 @@ public class BasicMovementScript : NetworkBehaviour
             isJumpCut = false;
             isJumpFalling = false;
             Jump();
-
         }
 
-
-        if (isJumpCut) {
+        if (isJumpFalling && verticalDir > 0) {
+            setGravityScale(gravityScale * floatGravityMult);
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
+        }
+        else if (isJumpCut) {
             setGravityScale(gravityScale * jumpCutGravityMult);
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-
         }
         else if (isJumping) {
             setGravityScale(gravityScale);
         }
         else if(rb.velocity.y < 0) {
-            setGravityScale(gravityScale * fallGravityMult);
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+                setGravityScale(gravityScale * fallGravityMult);
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
         }
         else {
             setGravityScale(gravityScale);
-        }
-    }
-        private Vector2 getInput() {
-
-        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-    }
-
-
-
-    private void FixedUpdate()
-    {
-        Run();
-
-    }
-
-    private void setGravityScale(float scale) {
-        rb.gravityScale = scale;
-    }
-    private void Run() {
-        float targetSpeed = horizontalDir * moveSpeed;
-
-        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? accelAmount : deccelAmount;
-
-        float speedDif = targetSpeed - rb.velocity.x;
-        float movement = speedDif * accelRate;
-
-        rb.AddForce(movement * Vector2.right, ForceMode2D.Force);
-    }
-
-    private void orientCharacter(bool isMovingRight) {
-        if(isMovingRight != isFacingRight) {
-            Vector3 scale = transform.localScale;
-            scale.x *= -1;
-            transform.localScale = scale;
-            isFacingRight = !isFacingRight;
-        }
-    }
-
-    public void jumpDownInput() {
-        lastJumpTime = jumpBuffer;
-    }
-    public void jumpUpInput() {
-        if (canJumpCut()) {
-            isJumpCut = true;
         }
     }
 
@@ -179,13 +161,57 @@ public class BasicMovementScript : NetworkBehaviour
         rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
     }
 
+    private void Run() {
+        float targetSpeed = horizontalDir * moveSpeed;
+
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? accelAmount : deccelAmount;
+
+        float speedDif = targetSpeed - rb.velocity.x;
+        float movement = speedDif * accelRate;
+
+        rb.AddForce(movement * Vector2.right, ForceMode2D.Force);
+    }
+
+
+    private void orientCharacter(bool isMovingRight) {
+        if(isMovingRight != isFacingRight) {
+            transform.Rotate(0f, 180f, 0f);
+            isFacingRight = !isFacingRight;
+        }
+    }
+
+    //----------------------------------------------------------
+    // Get and Set type methods
+    //----------------------------------------------------------
+    private void setGravityScale(float scale) {
+        rb.gravityScale = scale;
+    }
+
+    public void jumpDownInput() {
+        lastJumpTime = jumpBuffer;
+    }
+
+    public void jumpUpInput() {
+        if (canJumpCut()) {
+            isJumpCut = true;
+        }
+    }
+
+    private Vector2 getInput() {
+        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+    }
+
     private bool canJump() {
         return lastOnGroundTime > 0 && !isJumping;
     }
+
     private bool canJumpCut() {
         return isJumping && rb.velocity.y > 0;
     }
 
+    //----------------------------------------------------------
+    // Miscellaneous methods
+    //----------------------------------------------------------
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
