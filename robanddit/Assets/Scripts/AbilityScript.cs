@@ -124,9 +124,6 @@ public class AbilityScript : MonoBehaviour
     }
 
 
-    private void EnableMovement() {
-
-    }
     //----------------------------------------------------------
     // Miscellaneous junk 
     //----------------------------------------------------------
