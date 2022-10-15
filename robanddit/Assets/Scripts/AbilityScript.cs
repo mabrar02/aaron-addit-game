@@ -7,20 +7,24 @@ public class AbilityScript : MonoBehaviour
 
     #region VARIABLES
     private Vector2 mousePos = new Vector2();         //Absolute mouse position
-    private Vector2 relativeMousePos = new Vector2(); //Mouse position relative to player's transform
+    private Vector2 DirToMouse = new Vector2(); //Mouse position relative to player's transform
     //Player related variables
     private Rigidbody2D rb;
     private Collider2D col;
+    private Animator anim;
    
     // Haunt related variables
     [SerializeField] private Vector2 hauntSize;
     [SerializeField] private float hauntDistance;
-    private bool currentlyHaunting;
+    public bool currentlyHaunting;
     private Collider2D HauntCollider;
     private GameObject HauntedObject;
-    private bool DoneHaunt;
     private Vector2 DirToHaunt;
-    [SerializeField] private float HauntWooshSpeed = 5f;
+    private float DistToHaunt;
+    [SerializeField] private float HauntInSpeed = 10f;
+    [SerializeField] private float HauntOutSpeed = 5f;
+
+    private BasicMovementScript MoveScript;
     #endregion
    
     // Start is called before the first frame update
@@ -28,8 +32,9 @@ public class AbilityScript : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        anim = GetComponent<Animator>();
+        MoveScript = GetComponent<BasicMovementScript>();
         currentlyHaunting = false;
-        DoneHaunt = false;    
     }
 
     void Update() {
@@ -38,12 +43,15 @@ public class AbilityScript : MonoBehaviour
          * if not, you launch yourself via click or space
          * 
          */
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        relativeMousePos = mousePos - (Vector2)transform.position;
+        anim.SetBool("currentlyHaunting", currentlyHaunting);
 
-        if (Input.GetButtonDown("Fire1")  /*&& Vector2.Distance(transform.position,mousePos) <= hauntDistance*/) {
-            checkHaunt();
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        if (Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.Space)  /*&& Vector2.Distance(transform.position,mousePos) <= hauntDistance*/) {
+                checkHaunt();
         }
+
+
     }
     // Update is called once per frame
 
@@ -58,13 +66,13 @@ public class AbilityScript : MonoBehaviour
 
         if (HauntCollider && HauntCollider.CompareTag("Hauntable")) {
             HauntedObject = HauntCollider.gameObject;
-            Debug.Log(HauntCollider.gameObject.name);
+            currentlyHaunting = true;
+            MoveScript.MovementEnabled = false;
             StartCoroutine(PerformHaunt(HauntedObject));
+        } else {
+            currentlyHaunting = false;
         }
 
-    }
-    private void CalcDirToHaunt() {
-        DirToHaunt = HauntedObject.transform.position - transform.position;
     }
 
     private IEnumerator PerformHaunt (GameObject HauntObject) {
@@ -73,39 +81,55 @@ public class AbilityScript : MonoBehaviour
          * 
          */
         col.enabled = false;
-        while(!DoneHaunt) {
+        while(currentlyHaunting) {
+            CalcDistToHaunt();
             CalcDirToHaunt();
+            CalcDirToMouse();
+
             Debug.DrawRay(transform.position, DirToHaunt);
+            Debug.DrawRay(transform.position, DirToMouse);
+            Debug.Log(HauntCollider.gameObject.name);
 
-            rb.velocity = new Vector2(DirToHaunt.x*HauntWooshSpeed, DirToHaunt.y*HauntWooshSpeed);
-
-            if(Input.GetKeyDown(KeyCode.Space)) {
-            DoneHaunt = true;
-            Color originalColour = HauntObject.GetComponent<SpriteRenderer>().color;
-            HauntObject.GetComponent<SpriteRenderer>().color = Color.blue;
-            HauntObject.tag = "Hauntable";
-            currentlyHaunting = false;
+            rb.velocity = new Vector2(DirToHaunt.x*HauntInSpeed, DirToHaunt.y*HauntInSpeed);
+          
             yield return null;
-
-            } else { 
-            Color originalColour = HauntObject.GetComponent<SpriteRenderer>().color;
-            HauntObject.GetComponent<SpriteRenderer>().color = Color.red;
-            HauntObject.tag = "Haunted";
-            currentlyHaunting = true;
-            yield return null;
-
-            }
         
         }
+        rb.gravityScale = 0.5f;
+        rb.AddForce(new Vector2(DirToMouse.x*HauntOutSpeed, DirToMouse.y*HauntOutSpeed), ForceMode2D.Impulse);
 
-        DoneHaunt = false;
-        Debug.Log(DirToHaunt);
+        currentlyHaunting = false;
         col.enabled = true;
+        
+        //Movement script messes with the transition out of haunt state
+        yield return new WaitForSeconds(0.5f);
+        MoveScript.MovementEnabled = true;
+        yield return null;
     }
 
-//    private void 
+    //----------------------------------------------------------
+    // Calculation methods 
+    //----------------------------------------------------------
+    private void CalcDirToHaunt() {
+        DirToHaunt = (Vector2)HauntedObject.transform.position - (Vector2)transform.position;
+    }
+
+    private void CalcDirToMouse() {
+        DirToMouse = mousePos - (Vector2)transform.position;
+        DirToMouse = DirToMouse.normalized;
+    }
+
+    private void CalcDistToHaunt() {
+        DistToHaunt = ((Vector2)HauntedObject.transform.position - (Vector2)transform.position).magnitude;
+    }
 
 
+    private void EnableMovement() {
+
+    }
+    //----------------------------------------------------------
+    // Miscellaneous junk 
+    //----------------------------------------------------------
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(mousePos, hauntSize);

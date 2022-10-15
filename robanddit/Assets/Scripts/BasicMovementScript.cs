@@ -42,6 +42,8 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     //Timers
     private float lastOnGroundTime;
     private float lastJumpTime;
+
+    public bool MovementEnabled;
     #endregion
 
 
@@ -51,21 +53,24 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        MovementEnabled = true;
         isFacingRight = true;
         gravityScale = rb.gravityScale;
     }
 
     // Update is called once per frame
     private void Update() {
-
-        BasicMovement(); 
+        if(MovementEnabled) {
+            BasicMovement(); 
+        }
 
     }
     
     private void FixedUpdate()
     {
-        Run();
-
+        if(MovementEnabled) {
+            Run();
+        }
     }
 
    
