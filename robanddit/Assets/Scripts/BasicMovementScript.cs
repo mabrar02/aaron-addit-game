@@ -15,7 +15,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce;
     private float verticalDir;
-    private float gravityScale;
+    public float gravityScale;
     [SerializeField] private float jumpCutGravityMult;
     [SerializeField] private float fallGravityMult;
     [SerializeField] public float coyoteTime;
@@ -31,13 +31,15 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Rigidbody2D rb;
     private Animator anim;
-
+    private AbilityScript hauntScript;
+    
 
     //States
     private bool isFacingRight;
     private bool isJumping;
     private bool isJumpCut;
     private bool isJumpFalling;
+    private bool isHaunting;
 
     //Timers
     private float lastOnGroundTime;
@@ -51,6 +53,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        hauntScript = GetComponent<AbilityScript>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         MovementEnabled = true;
@@ -60,17 +63,12 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
 
     // Update is called once per frame
     private void Update() {
-        if(MovementEnabled) {
-            BasicMovement(); 
-        }
-
+        BasicMovement();
     }
     
     private void FixedUpdate()
     {
-        if(MovementEnabled) {
-            Run();
-        }
+        Run();
     }
 
    
@@ -103,12 +101,11 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
         }
 
 
-        if (!isJumping) {
+        if (!isJumping && !hauntScript.currentlyHaunting) {
             if (Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0, groundLayer) && !isJumping) {
                 lastOnGroundTime = coyoteTime;
             }
         }
-
 
         if(isJumping && rb.velocity.y < 0) {
             isJumping = false;
@@ -116,42 +113,36 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
         }
         if(lastOnGroundTime > 0 && !isJumping) {
             isJumpCut = false;
-            isJumpFalling = false;
-        }
-        if (isJumping && rb.velocity.y < 0) {
-            isJumping = false;
-            isJumpFalling = true;
-        }
-        if (lastOnGroundTime > 0 && !isJumping) {
-            isJumpCut = false;
             if (!isJumping) {
                 isJumpFalling = false;
             }
         }
-        if (canJump() && lastJumpTime > 0) {
+        if (!hauntScript.currentlyHaunting && canJump() && lastJumpTime > 0) {
             isJumping = true;
             isJumpCut = false;
             isJumpFalling = false;
             Jump();
         }
 
-        if (isJumpFalling && verticalDir > 0) {
-            setGravityScale(gravityScale * floatGravityMult);
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
-        }
-        else if (isJumpCut) {
-            setGravityScale(gravityScale * jumpCutGravityMult);
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-        }
-        else if (isJumping) {
-            setGravityScale(gravityScale);
-        }
-        else if(rb.velocity.y < 0) {
+        if (!hauntScript.currentlyHaunting) {
+            if (isJumpFalling && verticalDir > 0) {
+                setGravityScale(gravityScale * floatGravityMult);
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
+            }
+            else if (isJumpCut) {
+                setGravityScale(gravityScale * jumpCutGravityMult);
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+            }
+            else if (isJumping) {
+                setGravityScale(gravityScale);
+            }
+            else if (rb.velocity.y < 0) {
                 setGravityScale(gravityScale * fallGravityMult);
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-        }
-        else {
-            setGravityScale(gravityScale);
+            }
+            else {
+                setGravityScale(gravityScale);
+            }
         }
     }
 
@@ -188,7 +179,7 @@ public class BasicMovementScript : MonoBehaviour //NetworkBehaviour
     //----------------------------------------------------------
     // Get and Set type methods
     //----------------------------------------------------------
-    private void setGravityScale(float scale) {
+    public void setGravityScale(float scale) {
         rb.gravityScale = scale;
     }
 

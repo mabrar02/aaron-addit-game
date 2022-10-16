@@ -17,6 +17,7 @@ public class AbilityScript : MonoBehaviour
     [SerializeField] private Vector2 hauntSize;
     [SerializeField] private float hauntDistance;
     public bool currentlyHaunting;
+    public bool inHauntObj;
     private Collider2D HauntCollider;
     private GameObject HauntedObject;
     private Vector2 DirToHaunt;
@@ -35,77 +36,106 @@ public class AbilityScript : MonoBehaviour
         anim = GetComponent<Animator>();
         MoveScript = GetComponent<BasicMovementScript>();
         currentlyHaunting = false;
+        inHauntObj = false;
     }
 
     void Update() {
-        /*
-         * currentlyHaunting used to go from one haunt to another provided that distance is valid
-         * if not, you launch yourself via click or space
-         * 
-         */
+
         anim.SetBool("currentlyHaunting", currentlyHaunting);
 
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.Space)  /*&& Vector2.Distance(transform.position,mousePos) <= hauntDistance*/) {
-                checkHaunt();
+        if (!currentlyHaunting && !inHauntObj && Input.GetButtonDown("Fire1") && Vector2.Distance(transform.position,mousePos) <= hauntDistance) {
+             checkHauntIn();
+        }
+        else if(!currentlyHaunting && inHauntObj && ((Input.GetButtonDown("Fire1")) || (Input.GetKeyDown(KeyCode.Space)))) {
+            checkHauntOut();
         }
 
 
     }
-    // Update is called once per frame
 
-    void FixedUpdate()
-    {
-
-    }
-
-    public void checkHaunt() {
+    public void checkHauntIn() {
 
         HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
 
         if (HauntCollider && HauntCollider.CompareTag("Hauntable")) {
             HauntedObject = HauntCollider.gameObject;
-            currentlyHaunting = true;
-            MoveScript.MovementEnabled = false;
-            StartCoroutine(PerformHaunt(HauntedObject));
-        } else {
-            currentlyHaunting = false;
+
+            StartCoroutine(PerformHauntIn(HauntedObject));
         }
+    }
+
+    private IEnumerator PerformHauntIn(GameObject HauntObject) {
+        currentlyHaunting = true;
+        MoveScript.enabled = false;
+        col.enabled = false;
+
+        CalcDistToHaunt();
+        CalcDirToHaunt();
+        CalcDirToMouse();
+
+        Debug.DrawRay(transform.position, DirToHaunt);
+        Debug.DrawRay(transform.position, DirToMouse);
+        Debug.Log(HauntCollider.gameObject.name);
+
+        Vector2 hauntVel = new Vector2(DirToHaunt.x * HauntInSpeed, DirToHaunt.y * HauntInSpeed);
+
+        while (DistToHaunt >= 2) {
+            rb.velocity = hauntVel;
+            CalcDistToHaunt();
+            yield return null;
+        }
+
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.velocity = Vector2.zero;
+        transform.position = HauntObject.transform.position;
+        inHauntObj = true;
+        currentlyHaunting = false;
+        HauntedObject.tag = "Haunted";
+
+        yield return null;
 
     }
 
-    private IEnumerator PerformHaunt (GameObject HauntObject) {
-        /*
-         * figure out dash/velocity shit
-         * 
-         */
-        col.enabled = false;
-        while(currentlyHaunting) {
-            CalcDistToHaunt();
-            CalcDirToHaunt();
-            CalcDirToMouse();
-
-            Debug.DrawRay(transform.position, DirToHaunt);
-            Debug.DrawRay(transform.position, DirToMouse);
-            Debug.Log(HauntCollider.gameObject.name);
-
-            rb.velocity = new Vector2(DirToHaunt.x*HauntInSpeed, DirToHaunt.y*HauntInSpeed);
-          
-            yield return null;
-        
-        }
-        rb.gravityScale = 0.5f;
-        rb.AddForce(new Vector2(DirToMouse.x*HauntOutSpeed, DirToMouse.y*HauntOutSpeed), ForceMode2D.Impulse);
-
-        currentlyHaunting = false;
+    public void checkHauntOut() {
+        rb.bodyType = RigidbodyType2D.Dynamic;
         col.enabled = true;
+
+        HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
+        HauntedObject.tag = "Hauntable";
+
+        if (HauntCollider && HauntCollider.CompareTag("Hauntable") && Vector2.Distance(transform.position, mousePos) <= hauntDistance) {
+            HauntedObject = HauntCollider.gameObject;
+            StartCoroutine(PerformHauntIn(HauntedObject));
+        }
+        else {
+            StartCoroutine(PerformHauntOut());
+        }
+    }
+
+
+
+    private IEnumerator PerformHauntOut() {
+        currentlyHaunting = true;
+        inHauntObj = false;
+        MoveScript.enabled = true;
+        CalcDirToMouse();
+
+        MoveScript.setGravityScale(MoveScript.gravityScale);
+        Vector2 hauntPower = DirToMouse;
+        Debug.Log(hauntPower);
+        rb.AddForce(hauntPower * HauntOutSpeed , ForceMode2D.Impulse);
+
+
+        yield return new WaitForSeconds(1f);
+        currentlyHaunting = false;
         
-        //Movement script messes with the transition out of haunt state
-        yield return new WaitForSeconds(0.5f);
-        MoveScript.MovementEnabled = true;
         yield return null;
     }
+
+
+
 
     //----------------------------------------------------------
     // Calculation methods 
