@@ -88,7 +88,6 @@ public class AbilityScript : MonoBehaviour
 
             Debug.DrawRay(transform.position, DirToHaunt);
             Debug.DrawRay(transform.position, DirToMouse);
-            Debug.Log(HauntCollider.gameObject.name);
 
             rb.velocity = new Vector2(DirToHaunt.x*HauntInSpeed, DirToHaunt.y*HauntInSpeed);
           

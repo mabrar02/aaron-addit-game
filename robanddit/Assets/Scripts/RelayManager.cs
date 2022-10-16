@@ -14,16 +14,21 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
 
-public class RelayManager : NetworkBehaviour
+//----------------------------------------------------------
+// Class: RelayManager 
+// Sets up the Unity Relay server stuff depending on if user is Host or Client 
+//----------------------------------------------------------
+public class RelayManager : MonoBehaviour 
 {
-    Allocation allocation;
-    JoinAllocation JoinAllocation;
-    string GameJoinCode;   
-    public GameObject WorldManager;
-   
+
+    public string JoinCode;
+
+    private UIManager UMan;
+    
     // Start is called before the first frame update
     void Start()
     {
+        UMan = GameObject.Find("UI Canvas").GetComponent<UIManager>();
         
     }
 
@@ -34,50 +39,104 @@ public class RelayManager : NetworkBehaviour
         
     }
 
-    public async void SetupRelay() {
-       try {
-           WorldManager.SendMessage("AttemptingToConnect", 1);      
+    //----------------------------------------------------------
+    // Entry coroutines for host/client setup 
+    // Requires AuthenticationManager Start() to run first
+    // Execution order: UI Button -> StartHost/ClientSetup -> SetupHost/Client -> Setup/JoinRelay 
+    // Script order   : UIManager -> WorldManager          -> RelayManager     -> RelayManager
+    //----------------------------------------------------------
+    public IEnumerator SetupHost() {
+        var ServerRelay = SetupRelay();
 
-           allocation = await RelayService.Instance.CreateAllocationAsync(4); 
-
-           GameJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId); 
-
-           var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
-
-           var (ipv4address, port, allocationIdBytes, connectionData, key) = (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.Key);
-
-           NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(ipv4address, port, allocationIdBytes, key, connectionData, true);
-
-           NetworkManager.Singleton.StartHost();
-        
-           WorldManager.SendMessage("SetCode", GameJoinCode);
-        } catch {
-            Debug.Log("Error in setting up relay");
+        while (!ServerRelay.IsCompleted) {
+             yield return null;
         }
+
+        if (ServerRelay.IsFaulted) {
+             Debug.Log("Couldn't start Relay Server");
+             yield break;
+        }
+        var (ipv4address, port, allocationIdBytes, connectionData, key, joinCode) = ServerRelay.Result;
+
+        SetJoinCode(joinCode);
+
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(ipv4address, port, allocationIdBytes, key, connectionData, true);
+
+        NetworkManager.Singleton.StartHost();    
+
+        yield return null;
     }
 
-    public string GetCode() {
-           return GameJoinCode;
-    }
+   public IEnumerator SetupClient(string code) {
+        var ServerRelay = JoinRelay(code);
 
-    public async void JoinGame(string Code) {
-       try {
-        JoinAllocation = await RelayService.Instance.JoinAllocationAsync(Code); 
+        while (!ServerRelay.IsCompleted) {
 
-        var dtlsEndpoint = JoinAllocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
+            yield return null;
+        }
 
-        var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, JoinAllocation.AllocationIdBytes, JoinAllocation.ConnectionData, JoinAllocation.HostConnectionData, JoinAllocation.Key);
-            
+        if (ServerRelay.IsFaulted) {
+            Debug.Log("Couldn't join Relay Server");
+            yield break;
+        }
+
+        var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = ServerRelay.Result;
+
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData, true);
-        } catch {
-            Debug.Log("Error in connecting to host");
-        }
-
-
-
 
         NetworkManager.Singleton.StartClient();
+
+        yield return null;
+   }
+   
+   
+    //----------------------------------------------------------
+    // Relay server setup tasks 
+    //----------------------------------------------------------
+    private static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string joinCode)> SetupRelay() {
+        Allocation allocation;
+        string GameJoinCode;
+
+        try { 
+           allocation = await RelayService.Instance.CreateAllocationAsync(4); 
+        } catch {
+            Debug.Log("Failed creating allocation");
+            throw;
+        }
+
+        try {
+           GameJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId); 
+        } catch {
+            Debug.Log("Failed getting join code");
+            throw;
+        }
+
+           var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
+            
+           return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.Key, GameJoinCode);
     }
 
+    private static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] hostConnectionData, byte[] key)> JoinRelay(string Code) {
+        JoinAllocation allocation;
 
+       try {
+            allocation = await RelayService.Instance.JoinAllocationAsync(Code); 
+        } catch {
+            Debug.Log("Failed joining allocation");
+            throw;
+        }
+        var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
+
+        return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
+    }
+    
+
+    //----------------------------------------------------------
+    // Miscellaneous 
+    //----------------------------------------------------------
+    private void SetJoinCode(string code) {
+             JoinCode = code;
+    }
+
+   
 }

@@ -1,85 +1,77 @@
-using Unity.Netcode;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
+using Unity.Services.Authentication;
 
+//----------------------------------------------------------
+// Class: WorldManager 
+// Common point between Relay, Authentication, and UI manager meant to
+// consolidate data for the three, though can probably be combined with one to simplify things 
+//----------------------------------------------------------
 public class WorldManager : MonoBehaviour
 {
-    private int inGame = 0;
-    private int isHost = 0;
-    private int isClient = 0;
-    private int connecting = 0;
-    private int proset = 0;
-    public string profile = "";
-    public string JoinCode = "";
-    public GameObject RelayManager;
-    public GameObject AuthenticationManager;
 
-    void OnGUI()
-    {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer && isHost != 1 && isClient != 1)
-        {
-            StartButtons();
-        }
-        else
-        {
-            StatusLabels();
-            SetupAllocation();
-        }
-        GUILayout.EndArea();
-    }
+    public string profile;
+    public string JoinCode;
+    public string transport;
+    public string mode;
 
-    void StartButtons()
-    {
-        if (GUILayout.Button("Host")) isHost = 1;
-        if (GUILayout.Button("Client")) isClient = 1;
-    }
+    private RelayManager RMan;
+    private AuthenticationManager AMan;
+    private UIManager UMan;
 
-    void StatusLabels()
-    {
-        var mode = NetworkManager.Singleton.IsHost ?
-            "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-
-        GUILayout.Label("Transport: " +
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
-        GUILayout.Label("Profile: " + profile);
-
-        GUILayout.Label("Mode: " + mode);
-        GUILayout.Label("Join Code: " + JoinCode);
-    }
-
-    public void SetupAllocation() {
-        if (isHost == 1 && connecting == 0) {
-            RelayManager.SendMessage("SetupRelay");
-            inGame = 1;
-        } else if (isClient == 1) {
-            GUILayout.Label("Enter join code: ");
-            JoinCode = GUILayout.TextField(JoinCode);
-            if(proset == 0) {
-                AuthenticationManager.SendMessage("SwitchProfiles", "prof2");
-                proset = 1;
-            }
-            if (GUILayout.Button("Join")) {
-                JoinGame(JoinCode);
-                inGame = 1;
-            }
-        }
-    }
-
-    public void SetProfile(string x) {
-        profile = x;
-    }
-
-    public void AttemptingToConnect(int x) {
-        connecting = x;
-    }
-
-    public void SetCode(string Code) {
-        JoinCode = Code;
+    void Start() {
+        RMan = GameObject.Find("RelayManager").GetComponent<RelayManager>();
+        AMan = GameObject.Find("AuthenticationManager").GetComponent<AuthenticationManager>();
+        UMan = GameObject.Find("UI Canvas").GetComponent<UIManager>();
     }
 
 
-    public void JoinGame(string Code) {
-        RelayManager.SendMessage("JoinGame", Code);
+    //----------------------------------------------------------
+    // Entry points for UI buttons 
+    //----------------------------------------------------------
+    public void StartHost() {
+        StartCoroutine(StartHostSetup());
     }
+
+    public void StartClient() {
+        StartCoroutine(StartClientSetup());
+    }
+
+    //----------------------------------------------------------
+    // Connection setup coroutines 
+    // Requires AuthenticationManager Start() to run first
+    // Execution order: UI Button -> StartHost/ClientSetup -> SetupHost/Client -> Setup/JoinRelay 
+    // Script order   : UIManager -> WorldManager          -> RelayManager     -> RelayManager
+    //----------------------------------------------------------
+    private IEnumerator StartHostSetup() {
+        yield return RMan.SetupHost();
+
+        mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        profile = AuthenticationService.Instance.Profile;
+        JoinCode = RMan.JoinCode;  
+        UMan.SetConnectionInfo();
+    }
+
+    private IEnumerator StartClientSetup() {
+        yield return RMan.SetupClient(JoinCode);
+
+        mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        profile = AuthenticationService.Instance.Profile;
+
+        UMan.SetConnectionInfo();
+    }
+
+    //----------------------------------------------------------
+    // Miscellaneous 
+    //----------------------------------------------------------
+    public void SetupProfile() {
+        AMan.SwitchProfiles("prof2");
+    }
+
+
 }
 

@@ -5,11 +5,13 @@ using Unity.Services.Core;
 using Unity.Services.Authentication;
 using UnityEngine;
 
+//----------------------------------------------------------
+// Class: AuthenticationManager 
+// Anonymously authenticates the player, need to set distinct profiles for
+// multiplayer testing using Parallelsync
+//----------------------------------------------------------
 public class AuthenticationManager : MonoBehaviour
 {
-
-    public string profile;
-    public GameObject WorldManager;
 
     async void Start()
 	{
@@ -20,10 +22,7 @@ public class AuthenticationManager : MonoBehaviour
         await UnityServices.InitializeAsync(unityAutheticationInitOptions);
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        
-        profile = AuthenticationService.Instance.Profile;
-
-        SetProfile(profile);
+       
 	}
     
      async public void SwitchProfiles(string profile) {
@@ -32,15 +31,7 @@ public class AuthenticationManager : MonoBehaviour
         AuthenticationService.Instance.SwitchProfile(profile);
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-        profile = AuthenticationService.Instance.Profile;
-    
-        SetProfile(profile);
+  
     }
-
-    public void SetProfile(string profile) {
-        WorldManager.SendMessage("SetProfile", profile);  
-    }
-
 
 }
