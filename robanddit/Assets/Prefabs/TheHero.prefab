@@ -156,6 +156,7 @@ MonoBehaviour:
   accelAmount: 13
   deccelAmount: 16
   jumpForce: 22
+  gravityScale: 0
   jumpCutGravityMult: 5
   fallGravityMult: 4
   coyoteTime: 0.1
@@ -218,6 +219,7 @@ MonoBehaviour:
   hauntSize: {x: 1.5, y: 1.5}
   hauntDistance: 7
   currentlyHaunting: 0
+  inHauntObj: 0
   HauntInSpeed: 10
   HauntOutSpeed: 30
 --- !u!114 &2398269421225150588
