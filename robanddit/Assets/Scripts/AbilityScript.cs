@@ -12,6 +12,7 @@ public class AbilityScript : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D col;
     private Animator anim;
+    private GameObject arrow;
    
     // Haunt related variables
     [SerializeField] private Vector2 hauntSize;
@@ -24,6 +25,8 @@ public class AbilityScript : MonoBehaviour
     private float DistToHaunt;
     [SerializeField] private float HauntInSpeed = 10f;
     [SerializeField] private float HauntOutSpeed = 5f;
+    [SerializeField] private float hauntDuration = 1.5f;
+    private float hauntReset;
 
     private BasicMovementScript MoveScript;
     #endregion
@@ -31,17 +34,20 @@ public class AbilityScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        hauntReset = hauntDuration;
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         anim = GetComponent<Animator>();
         MoveScript = GetComponent<BasicMovementScript>();
         currentlyHaunting = false;
         inHauntObj = false;
+        arrow = transform.Find("arrow").gameObject;
     }
 
     void Update() {
 
         anim.SetBool("currentlyHaunting", currentlyHaunting);
+        anim.SetBool("inHauntObj", inHauntObj);
 
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -51,7 +57,13 @@ public class AbilityScript : MonoBehaviour
         else if(!currentlyHaunting && inHauntObj && ((Input.GetButtonDown("Fire1")) || (Input.GetKeyDown(KeyCode.Space)))) {
             checkHauntOut();
         }
-
+        if (inHauntObj) {
+            arrow.SetActive(true);
+            arrow.transform.position = HauntedObject.transform.position + new Vector3(3,3,0);
+        }
+        else {
+            arrow.SetActive(false);
+        }
 
     }
 
@@ -79,9 +91,12 @@ public class AbilityScript : MonoBehaviour
         Debug.DrawRay(transform.position, DirToMouse);
         Debug.Log(HauntCollider.gameObject.name);
 
-        Vector2 hauntVel = new Vector2(DirToHaunt.x * HauntInSpeed, DirToHaunt.y * HauntInSpeed);
+        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        Vector2 hauntVel = new Vector2(DirToHaunt.x, DirToHaunt.y) * HauntInSpeed;
 
-        while (DistToHaunt >= 2) {
+        while (DistToHaunt >= 3) {
             rb.velocity = hauntVel;
             CalcDistToHaunt();
             yield return null;
@@ -119,18 +134,43 @@ public class AbilityScript : MonoBehaviour
     private IEnumerator PerformHauntOut() {
         currentlyHaunting = true;
         inHauntObj = false;
-        MoveScript.enabled = true;
+       
         CalcDirToMouse();
 
-        MoveScript.setGravityScale(MoveScript.gravityScale);
-        Vector2 hauntPower = DirToMouse;
-        Debug.Log(hauntPower);
-        rb.AddForce(hauntPower * HauntOutSpeed , ForceMode2D.Impulse);
+        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        MoveScript.enabled = true;
 
+        while (currentlyHaunting) {
+            if(hauntDuration > 0) {
+                hauntDuration -= Time.deltaTime;
+                rb.velocity = DirToMouse * HauntOutSpeed;
+            }
+            else {
+                currentlyHaunting = false;
+                hauntDuration = hauntReset;
+                rb.velocity = new Vector2(rb.velocity.x, DirToMouse.y);
+                transform.rotation = Quaternion.identity;
+                MoveScript.isFacingRight = true;
+                if (DirToMouse.x >= 0) {
+                    MoveScript.orientCharacter(true);
+                }
+                else {
+                    MoveScript.orientCharacter(false);
+                }
+            }
+            yield return null;
+        }
 
-        yield return new WaitForSeconds(1f);
-        currentlyHaunting = false;
         
+        
+
+        MoveScript.isJumpCut = false;
+        MoveScript.isJumping = false;
+        MoveScript.isJumpFalling = true;
+        Debug.Log(MoveScript.isFacingRight);
+
         yield return null;
     }
 
@@ -142,6 +182,7 @@ public class AbilityScript : MonoBehaviour
     //----------------------------------------------------------
     private void CalcDirToHaunt() {
         DirToHaunt = (Vector2)HauntedObject.transform.position - (Vector2)transform.position;
+        DirToHaunt = DirToHaunt.normalized;
     }
 
     private void CalcDirToMouse() {

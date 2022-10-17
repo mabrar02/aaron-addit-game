@@ -9,7 +9,7 @@ public class BasicMovementScript : NetworkBehaviour
     [Header("Run Variables")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float accelAmount;
-    [SerializeField] private float deccelAmount;
+    [SerializeField] public float deccelAmount;
     private float horizontalDir;
 
     [Header("Jump Variables")]
@@ -35,10 +35,10 @@ public class BasicMovementScript : NetworkBehaviour
     
 
     //States
-    private bool isFacingRight;
-    private bool isJumping;
-    private bool isJumpCut;
-    private bool isJumpFalling;
+    [HideInInspector] public bool isFacingRight;
+    [HideInInspector] public bool isJumping;
+    [HideInInspector] public bool isJumpCut;
+    [HideInInspector] public bool isJumpFalling;
     private bool isHaunting;
 
     //Timers
@@ -68,7 +68,10 @@ public class BasicMovementScript : NetworkBehaviour
     
     private void FixedUpdate()
     {
-        Run();
+        if (!hauntScript.currentlyHaunting) {
+            Run();
+        }
+
     }
 
    
@@ -85,7 +88,7 @@ public class BasicMovementScript : NetworkBehaviour
 
         horizontalDir = getInput().x;
         verticalDir = getInput().y;
-        if (horizontalDir != 0) {
+        if (horizontalDir != 0 && !hauntScript.currentlyHaunting) {
             orientCharacter(horizontalDir > 0);
         }
 
@@ -169,7 +172,7 @@ public class BasicMovementScript : NetworkBehaviour
     }
 
 
-    private void orientCharacter(bool isMovingRight) {
+    public void orientCharacter(bool isMovingRight) {
         if(isMovingRight != isFacingRight) {
             transform.Rotate(0f, 180f, 0f);
             isFacingRight = !isFacingRight;
