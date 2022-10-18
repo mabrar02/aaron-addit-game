@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 300538259}
   - component: {fileID: 2398269421225150588}
   - component: {fileID: -4574661984242194708}
+  - component: {fileID: 4654017433316379540}
   m_Layer: 2
   m_Name: TheHero
   m_TagString: Player
@@ -171,6 +172,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   rb: {fileID: 4754773287812804589}
+  isFacingRight: 0
   isJumping: 0
   isJumpCut: 0
   isJumpFalling: 0
@@ -227,6 +229,7 @@ MonoBehaviour:
   HauntInSpeed: 80
   HauntOutSpeed: 60
   hauntDuration: 0.2
+  inRange: 0
 --- !u!114 &2398269421225150588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,6 +272,18 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &4654017433316379540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4754773287812804602}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 088373d49578d7547b326f866b7cf507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4754773289779300101
 GameObject:
   m_ObjectHideFlags: 0

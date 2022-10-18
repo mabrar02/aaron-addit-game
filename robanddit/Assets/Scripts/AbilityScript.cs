@@ -15,7 +15,7 @@ public class AbilityScript : MonoBehaviour
     private GameObject arrow;
    
     // Haunt related variables
-    [SerializeField] private Vector2 hauntSize;
+    [SerializeField] public Vector2 hauntSize;
     [SerializeField] private float hauntDistance;
     public bool currentlyHaunting;
     public bool inHauntObj;
@@ -27,6 +27,7 @@ public class AbilityScript : MonoBehaviour
     [SerializeField] private float HauntOutSpeed = 5f;
     [SerializeField] private float hauntDuration = 1.5f;
     private float hauntReset;
+    [HideInInspector] public bool inRange;
 
     private BasicMovementScript MoveScript;
     #endregion
@@ -50,8 +51,11 @@ public class AbilityScript : MonoBehaviour
         anim.SetBool("inHauntObj", inHauntObj);
 
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        inRange = Vector2.Distance(transform.position, mousePos) <= hauntDistance;
 
-        if (!currentlyHaunting && !inHauntObj && Input.GetButtonDown("Fire1") && Vector2.Distance(transform.position,mousePos) <= hauntDistance) {
+        
+
+        if (!currentlyHaunting && !inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
              checkHauntIn();
         }
         else if(!currentlyHaunting && inHauntObj && ((Input.GetButtonDown("Fire1")) || (Input.GetKeyDown(KeyCode.Space)))) {
@@ -70,7 +74,6 @@ public class AbilityScript : MonoBehaviour
     public void checkHauntIn() {
 
         HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
-
         if (HauntCollider && HauntCollider.CompareTag("Hauntable")) {
             HauntedObject = HauntCollider.gameObject;
 
@@ -108,6 +111,7 @@ public class AbilityScript : MonoBehaviour
         inHauntObj = true;
         currentlyHaunting = false;
         HauntedObject.tag = "Haunted";
+        HauntedObject.GetComponent<SpriteRenderer>().color = Color.red;
 
         yield return null;
 
@@ -134,6 +138,7 @@ public class AbilityScript : MonoBehaviour
     private IEnumerator PerformHauntOut() {
         currentlyHaunting = true;
         inHauntObj = false;
+        HauntedObject.GetComponent<SpriteRenderer>().color = Color.white;
        
         CalcDirToMouse();
 
