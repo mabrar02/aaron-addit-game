@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d29ad1548c7ad245b09a795768b71af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HauntedColour: {r: 1, g: 0, b: 0, a: 1}
   hauntSize: {x: 1.5, y: 1.5}
   hauntDistance: 100
   currentlyHaunting: 0

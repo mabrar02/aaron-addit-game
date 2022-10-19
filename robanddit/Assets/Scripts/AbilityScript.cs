@@ -13,6 +13,8 @@ public class AbilityScript : MonoBehaviour
     private Collider2D col;
     private Animator anim;
     private GameObject arrow;
+    public Color HauntedColour;
+    private Color originalColour;
    
     // Haunt related variables
     [SerializeField] public Vector2 hauntSize;
@@ -20,7 +22,7 @@ public class AbilityScript : MonoBehaviour
     public bool currentlyHaunting;
     public bool inHauntObj;
     private Collider2D HauntCollider;
-    private GameObject HauntedObject;
+    [HideInInspector] public GameObject HauntedObject;
     private Vector2 DirToHaunt;
     private float DistToHaunt;
     [SerializeField] private float HauntInSpeed = 10f;
@@ -35,6 +37,7 @@ public class AbilityScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         hauntReset = hauntDuration;
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
@@ -76,6 +79,7 @@ public class AbilityScript : MonoBehaviour
         HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
         if (HauntCollider && HauntCollider.CompareTag("Hauntable")) {
             HauntedObject = HauntCollider.gameObject;
+            originalColour = HauntedObject.GetComponent<SpriteRenderer>().color;
 
             StartCoroutine(PerformHauntIn(HauntedObject));
         }
@@ -111,7 +115,7 @@ public class AbilityScript : MonoBehaviour
         inHauntObj = true;
         currentlyHaunting = false;
         HauntedObject.tag = "Haunted";
-        HauntedObject.GetComponent<SpriteRenderer>().color = Color.red;
+        HauntedObject.GetComponent<SpriteRenderer>().color = HauntedColour;
 
         yield return null;
 
@@ -123,6 +127,7 @@ public class AbilityScript : MonoBehaviour
 
         HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
         HauntedObject.tag = "Hauntable";
+        HauntedObject.GetComponent<SpriteRenderer>().color = Color.white;
 
         if (HauntCollider && HauntCollider.CompareTag("Hauntable") && Vector2.Distance(transform.position, mousePos) <= hauntDistance) {
             HauntedObject = HauntCollider.gameObject;
@@ -131,6 +136,7 @@ public class AbilityScript : MonoBehaviour
         else {
             StartCoroutine(PerformHauntOut());
         }
+        
     }
 
 
@@ -138,7 +144,7 @@ public class AbilityScript : MonoBehaviour
     private IEnumerator PerformHauntOut() {
         currentlyHaunting = true;
         inHauntObj = false;
-        HauntedObject.GetComponent<SpriteRenderer>().color = Color.white;
+        
        
         CalcDirToMouse();
 
@@ -165,6 +171,7 @@ public class AbilityScript : MonoBehaviour
                     MoveScript.orientCharacter(false);
                 }
             }
+            
             yield return null;
         }
 
