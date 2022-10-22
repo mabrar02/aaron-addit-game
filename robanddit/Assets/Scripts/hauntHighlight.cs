@@ -13,30 +13,28 @@ public class hauntHighlight : MonoBehaviour
     {
         StartCoroutine(getPlayer());
         originalColour = gameObject.GetComponent<SpriteRenderer>().color;
-        sr = gameObject.GetComponent<SpriteRenderer>();
-
-        
+        sr = gameObject.GetComponent<SpriteRenderer>();    
     }
+
     private void OnMouseEnter() {
-        if (abilityScript.inRange) {
+        if (player && abilityScript.inRange) {
             sr.color = abilityScript.HauntedColour;
         }
     }
 
     private void OnMouseExit() {
-        if ((abilityScript.HauntedObject != gameObject || !abilityScript.inHauntObj)) {
+        if (player && (abilityScript.HauntedObject != gameObject || !abilityScript.inHauntObj)) {
             sr.color = originalColour;
-        }
-       
+        }     
     }
-    private IEnumerator getPlayer() {
-        
-        while (!player) {
-            player = GameObject.FindGameObjectWithTag("Player");
-            yield return new WaitForSeconds(0.5f);
-        }
 
-        abilityScript = player.GetComponent<AbilityScript>();
-        yield return null;
+    private IEnumerator getPlayer() {      
+        while(!player) {
+            try {
+                player = GameObject.FindGameObjectWithTag("Player");
+                abilityScript = player.GetComponent<AbilityScript>();
+            } catch {}      
+            yield return null;
+        }
     }
 }

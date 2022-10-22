@@ -227,6 +227,7 @@ MonoBehaviour:
   hauntDistance: 100
   currentlyHaunting: 0
   inHauntObj: 0
+  HauntedObject: {fileID: 0}
   HauntInSpeed: 80
   HauntOutSpeed: 60
   hauntDuration: 0.2
@@ -280,7 +281,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4754773287812804602}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 088373d49578d7547b326f866b7cf507, type: 3}
   m_Name: 
