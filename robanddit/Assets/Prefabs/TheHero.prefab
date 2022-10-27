@@ -158,7 +158,7 @@ MonoBehaviour:
   moveSpeed: 17
   accelAmount: 13
   deccelAmount: 16
-  jumpForce: 22
+  jumpForce: 25
   gravityScale: 0
   jumpCutGravityMult: 5
   fallGravityMult: 4
