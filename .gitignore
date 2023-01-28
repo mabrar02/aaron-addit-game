@@ -11,6 +11,7 @@ robanddit/[Ll]ogs/
 robanddit/[Mm]emoryCaptures/
 robanddit/[Uu]ser[Ss]ettings/
 robanddit/[Rr]ecordings/
+robanddit/[Pp]rojectSettings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -60,6 +61,10 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+
+
+# Custom crap that don't need
 *.swp
 *.vsconfig
 /robanddit_clone_0/*
+InitCodeMarker
