@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Services.Authentication;
+using Cinemachine; 
 
 //----------------------------------------------------------
 // Class: WorldManager 
@@ -16,10 +17,12 @@ public class WorldManager : MonoBehaviour
     public string JoinCode;
     public string transport;
     public string mode;
+    public GameObject TheHero;
 
     private RelayManager RMan;
     private AuthenticationManager AMan;
     private UIManager UMan;
+    [SerializeField] private GameObject CMCam;
 
     void Start() {
         RMan = GameObject.Find("RelayManager").GetComponent<RelayManager>();
@@ -37,6 +40,7 @@ public class WorldManager : MonoBehaviour
 
     public void StartClient() {
         StartCoroutine(StartClientSetup());
+
     }
 
     //----------------------------------------------------------
@@ -53,6 +57,8 @@ public class WorldManager : MonoBehaviour
         profile = AuthenticationService.Instance.Profile;
         JoinCode = RMan.JoinCode;  
         UMan.SetConnectionInfo();
+        TheHero = GameObject.FindGameObjectWithTag("Player"); 
+        CMCam.GetComponent<CinemachineVirtualCamera>().Follow = TheHero.transform; 
     }
 
     private IEnumerator StartClientSetup() {
@@ -63,6 +69,9 @@ public class WorldManager : MonoBehaviour
         profile = AuthenticationService.Instance.Profile;
 
         UMan.SetConnectionInfo();
+        //Camera controls for multiplayer
+//        TheHero = GameObject.FindGameObjectWithTag("Player"); 
+//        CMCam.GetComponent<CinemachineVirtualCamera>().Follow = TheHero.transform; 
     }
 
     //----------------------------------------------------------
