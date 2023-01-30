@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
 using Cinemachine; 
@@ -11,12 +12,10 @@ using Cinemachine;
 //----------------------------------------------------------
 public class UIManager : MonoBehaviour 
 {
+    public static UIManager Instance { get; private set;}
+
     public GameObject TheHero;
     
-    private WorldManager WMan;
-    private GameObject NMan; //NetworkManager
-    private GameObject RMan; //RelayManager
-    private GameObject AMan; //AuthenticationManager  
     [SerializeField] private GameObject CMCam;
 
     private GameObject StartMenu;
@@ -24,17 +23,18 @@ public class UIManager : MonoBehaviour
     private GameObject JoinMenu;
 
 
+    // Singleton pattern
+    void Awake() {
+        if(Instance != null && Instance != this) { Destroy(this);}
+        else { Instance = this; }     
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
         StartMenu = GameObject.Find("StartMenu");
         ConnectionInfo = GameObject.Find("ConnectionInfo");
         JoinMenu = GameObject.Find("JoinMenu");
-
-        WMan = GameObject.Find("WorldManager").GetComponent<WorldManager>();
-        NMan = GameObject.Find("NetworkManager");
-        RMan = GameObject.Find("RelayManager");
-        AMan = GameObject.Find("AuthenticationManager");
 
         ConnectionInfo.SetActive(false);
         JoinMenu.SetActive(false);
@@ -51,32 +51,34 @@ public class UIManager : MonoBehaviour
         JoinMenu.SetActive(false);
         ConnectionInfo.SetActive(true);
         
-        ConnectionInfo.transform.Find("code").GetComponent<TextMeshProUGUI>().text = WMan.JoinCode;
-        ConnectionInfo.transform.Find("mode").GetComponent<TextMeshProUGUI>().text = WMan.mode;
-        ConnectionInfo.transform.Find("transport").GetComponent<TextMeshProUGUI>().text = WMan.transport;
-        ConnectionInfo.transform.Find("profile").GetComponent<TextMeshProUGUI>().text = WMan.profile;
+        ConnectionInfo.transform.Find("code").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.JoinCode;
+        ConnectionInfo.transform.Find("mode").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Mode;
+        ConnectionInfo.transform.Find("transport").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Transport;
+        ConnectionInfo.transform.Find("profile").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Profile;
                 
     }
 
     public void JoinGameScreen() {
-        StartMenu.SetActive(false); 
-        JoinMenu.SetActive(true);
+        Instance.StartMenu.SetActive(false); 
+        Instance.JoinMenu.SetActive(true);
     }
 
     public void SetJoinCode() {
-       WMan.JoinCode = JoinMenu.transform.Find("code").GetComponent<TMP_InputField>().text;
+       MultiplayerManager.Instance.JoinCode = Instance.JoinMenu.transform.Find("code").GetComponent<TMP_InputField>().text;
     }
 
     public void SetSingePlayer() {
-        StartMenu.SetActive(false); 
-        JoinMenu.SetActive(false);
-        ConnectionInfo.SetActive(false);
-        NMan.SetActive(false);
-        AMan.SetActive(false);
-        RMan.SetActive(false);
-        WMan.gameObject.SetActive(false);
-        TheHero = Instantiate(TheHero, new Vector3(0,0,0), Quaternion.identity);
-        CMCam.GetComponent<CinemachineVirtualCamera>().Follow = TheHero.transform; 
+        Instance.StartMenu.SetActive(false); 
+        Instance.JoinMenu.SetActive(false);
+        Instance.ConnectionInfo.SetActive(false);
+
+        NetworkManager.Singleton.gameObject.SetActive(false);
+
+        MultiplayerManager.Instance.gameObject.SetActive(false);
+        MultiplayerManager.Instance.gameObject.SetActive(false);
+        MultiplayerManager.Instance.gameObject.SetActive(false);
+        Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
+        Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
     }
 
 
