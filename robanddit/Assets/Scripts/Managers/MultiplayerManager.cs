@@ -36,12 +36,12 @@ public class MultiplayerManager : MonoBehaviour
 
     public static MultiplayerManager Instance { get; private set;}
 
-    public string JoinCode;
-    public string Profile;
-    public string Transport;
-    public string Mode;
+    public static string JoinCode  { get; set;}
+    public static string Profile   { get; set;}
+    public static string Transport { get; set;}
+    public static string Mode      { get; set;}
 
-    public GameObject TheHero;
+    [SerializeField] private GameObject TheHero;
 
     [SerializeField] private GameObject CMCam;
 

@@ -18,10 +18,7 @@ public class UIManager : MonoBehaviour
     
     [SerializeField] private GameObject CMCam;
 
-    private GameObject StartMenu;
-    private GameObject ConnectionInfo;
-    private GameObject JoinMenu;
-
+    IDictionary<string, GameObject> UICanvasChildren = new Dictionary<string, GameObject>();
 
     // Singleton pattern
     void Awake() {
@@ -32,12 +29,12 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        StartMenu = GameObject.Find("StartMenu");
-        ConnectionInfo = GameObject.Find("ConnectionInfo");
-        JoinMenu = GameObject.Find("JoinMenu");
+        for(int i = 0; i < gameObject.transform.childCount; ++i) {
+            UICanvasChildren.Add(gameObject.transform.GetChild(i).gameObject.name, gameObject.transform.GetChild(i).gameObject);
+        }
 
-        ConnectionInfo.SetActive(false);
-        JoinMenu.SetActive(false);
+        UICanvasChildren["ConnectionInfo"].SetActive(false);
+        UICanvasChildren["JoinMenu"].SetActive(false);
     }
 
     // Update is called once per frame
@@ -46,39 +43,43 @@ public class UIManager : MonoBehaviour
     }
     
 
+    //----------------------------------------------------------
+    // 
+    //----------------------------------------------------------
     public void SetConnectionInfo() {
-        StartMenu.SetActive(false); 
-        JoinMenu.SetActive(false);
-        ConnectionInfo.SetActive(true);
+        UICanvasChildren["StartMenu"].SetActive(false);
+        UICanvasChildren["JoinMenu"].SetActive(false);
+        UICanvasChildren["ConnectionInfo"].SetActive(true);
         
-        ConnectionInfo.transform.Find("code").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.JoinCode;
-        ConnectionInfo.transform.Find("mode").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Mode;
-        ConnectionInfo.transform.Find("transport").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Transport;
-        ConnectionInfo.transform.Find("profile").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Instance.Profile;
+        UICanvasChildren["ConnectionInfo"].transform.Find("code").GetComponent<TextMeshProUGUI>().text      = MultiplayerManager.JoinCode;
+        UICanvasChildren["ConnectionInfo"].transform.Find("mode").GetComponent<TextMeshProUGUI>().text      = MultiplayerManager.Mode;
+        UICanvasChildren["ConnectionInfo"].transform.Find("transport").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.Transport;
+        UICanvasChildren["ConnectionInfo"].transform.Find("profile").GetComponent<TextMeshProUGUI>().text   = MultiplayerManager.Profile;
                 
     }
 
     public void JoinGameScreen() {
-        Instance.StartMenu.SetActive(false); 
-        Instance.JoinMenu.SetActive(true);
+        UICanvasChildren["StartMenu"].SetActive(false);
+        UICanvasChildren["JoinMenu"].SetActive(true);
     }
 
     public void SetJoinCode() {
-       MultiplayerManager.Instance.JoinCode = Instance.JoinMenu.transform.Find("code").GetComponent<TMP_InputField>().text;
+       MultiplayerManager.JoinCode = UICanvasChildren["JoinMenu"].transform.Find("code").GetComponent<TMP_InputField>().text;
     }
 
-    public void SetSingePlayer() {
-        Instance.StartMenu.SetActive(false); 
-        Instance.JoinMenu.SetActive(false);
-        Instance.ConnectionInfo.SetActive(false);
+    public void SetSinglePlayer() {
+        UICanvasChildren["StartMenu"].SetActive(false);
+        UICanvasChildren["JoinMenu"].SetActive(false);
+        UICanvasChildren["ConnectionInfo"].SetActive(false);
 
         NetworkManager.Singleton.gameObject.SetActive(false);
 
         MultiplayerManager.Instance.gameObject.SetActive(false);
-        MultiplayerManager.Instance.gameObject.SetActive(false);
-        MultiplayerManager.Instance.gameObject.SetActive(false);
         Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
         Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
+
+
+
     }
 
 
