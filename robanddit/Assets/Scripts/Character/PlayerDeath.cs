@@ -13,11 +13,12 @@ public class PlayerDeath : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
     }
+
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Hazard")) {
             rb.bodyType = RigidbodyType2D.Static;
             sr.enabled = false;
-            this.gameObject.GetComponent<BasicMovementScript>().enabled = false;
+            gameObject.GetComponent<BasicMovementScript>().enabled = false;
             StartCoroutine(Respawn());
         }
     }

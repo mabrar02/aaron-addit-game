@@ -2608,10 +2608,9 @@ GameObject:
   - component: {fileID: 485154724}
   - component: {fileID: 485154723}
   - component: {fileID: 485154722}
-  - component: {fileID: 485154721}
   m_Layer: 6
   m_Name: PCollider (1)
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2631,18 +2630,6 @@ Transform:
   m_Father: {fileID: 151889107}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &485154721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 485154719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4890cc575ca22bc4694b6fb11c06f945, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!251 &485154722
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -3553,10 +3540,9 @@ GameObject:
   - component: {fileID: 748167945}
   - component: {fileID: 748167944}
   - component: {fileID: 748167943}
-  - component: {fileID: 748167946}
   m_Layer: 6
   m_Name: PCollider
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3673,18 +3659,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &748167946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748167941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4890cc575ca22bc4694b6fb11c06f945, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &804795571
 GameObject:
   m_ObjectHideFlags: 0
@@ -16253,10 +16227,9 @@ GameObject:
   - component: {fileID: 1908522166}
   - component: {fileID: 1908522165}
   - component: {fileID: 1908522164}
-  - component: {fileID: 1908522163}
   m_Layer: 6
   m_Name: PCollider (2)
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16276,18 +16249,6 @@ Transform:
   m_Father: {fileID: 151889107}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1908522163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1908522161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4890cc575ca22bc4694b6fb11c06f945, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!251 &1908522164
 PlatformEffector2D:
   m_ObjectHideFlags: 0

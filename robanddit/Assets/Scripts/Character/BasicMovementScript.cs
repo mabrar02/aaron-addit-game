@@ -1,51 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
-public class BasicMovementScript : NetworkBehaviour 
+public class BasicMovementScript : MonoBehaviour 
 {
     #region VARIABLES
     [Header("Run Variables")]
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float accelAmount;
-    [SerializeField] public float deccelAmount;
+    [SerializeField] private float targetMoveSpeed    = 17;
+    [SerializeField] private float accelAmount        = 13;
+    [SerializeField] public float deccelAmount        = 16;
     private float horizontalDir;
 
     [Header("Jump Variables")]
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpForce          = 25;
+    [SerializeField] private float jumpCutGravityMult = 5;
+    [SerializeField] private float fallGravityMult    = 4;
+    [SerializeField] public  float coyoteTime         = 0.1f;
+    [SerializeField] private float maxFallSpeed       = 30;
+    [SerializeField] private float maxFloatSpeed      = 7;
+    [SerializeField] private float jumpBuffer         = 0.15f;
+    [SerializeField] private float floatGravityMult   = 0.5f;
+    [HideInInspector] public int  jumpDir;
     private float verticalDir;
-    public float gravityScale;
-    [SerializeField] private float jumpCutGravityMult;
-    [SerializeField] private float fallGravityMult;
-    [SerializeField] public float coyoteTime;
-    [SerializeField] private float maxFallSpeed;
-    [SerializeField] private float maxFloatSpeed;
-    [SerializeField] private float jumpBuffer;
-    [SerializeField] private float floatGravityMult;
-
+    private float gravityScale;
 
     [Header("Components")]
-    [SerializeField] private Transform groundCheck;
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.49f, 0.03f);
+    [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Rigidbody2D rb;
+    private Rigidbody2D rb;
     private Animator anim;
+    private Collider2D col;
     private AbilityScript hauntScript;
     
 
     //States
-    [HideInInspector] public bool isFacingRight;
-    [HideInInspector] public bool isJumping;
-    [HideInInspector] public bool isJumpCut;
-    [HideInInspector] public bool isJumpFalling;
-    private bool isHaunting;
+    public bool isFacingRight {get; set;}
+    public bool isJumping     {get; set;}
+    public bool isJumpCut     {get; set;}
+    public bool isJumpFalling {get; set;}
+    private bool playerOnPlatform;
 
     //Timers
     private float lastOnGroundTime;
     private float lastJumpTime;
 
-    public bool MovementEnabled;
     #endregion
 
 
@@ -56,22 +55,23 @@ public class BasicMovementScript : NetworkBehaviour
         hauntScript = GetComponent<AbilityScript>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        MovementEnabled = true;
+        col = GetComponent<Collider2D>();
         isFacingRight = true;
         gravityScale = rb.gravityScale;
     }
 
     // Update is called once per frame
     private void Update() {
-        BasicMovement();
+        if (!hauntScript.currentlyHaunting) {
+            BasicMovement();
+        }
     }
     
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
         if (!hauntScript.currentlyHaunting) {
-            Run();
+            ApplyForce();
+            PollJumpMechanic();
         }
-
     }
 
    
@@ -82,73 +82,89 @@ public class BasicMovementScript : NetworkBehaviour
         #region ANIMATION
         anim.SetBool("isGrounded", lastOnGroundTime > 0);
         anim.SetFloat("horizontalDirection", Mathf.Abs(horizontalDir));
-        anim.SetBool("isJumping", isJumping);
-        anim.SetBool("isFalling", isJumpFalling);
+        anim.SetBool("isJumping", jumpDir == 1);
+        anim.SetBool("isFalling", jumpDir == -1);
         #endregion
 
-        horizontalDir = getInput().x;
-        verticalDir = getInput().y;
-        if (horizontalDir != 0 && !hauntScript.currentlyHaunting) {
+        horizontalDir = Input.GetAxisRaw("Horizontal");
+        verticalDir   = Input.GetAxisRaw("Vertical");
+        jumpDir       = (Mathf.RoundToInt(rb.velocity.y) > 0) ? 1 : (Mathf.RoundToInt(rb.velocity.y) < 0) ? -1 : 0;
+
+        // Orient sprite direction
+        if (horizontalDir != 0) {
             orientCharacter(horizontalDir > 0);
         }
 
         lastJumpTime -= Time.deltaTime;
         lastOnGroundTime -= Time.deltaTime;
-
-
+      
         if (Input.GetKeyDown(KeyCode.Space)) {
-            jumpDownInput();
+            isJumpCut = false;
+            lastJumpTime = jumpBuffer;
         }
+
         if (Input.GetKeyUp(KeyCode.Space)) {
-            jumpUpInput();
+            if(jumpDir == 1) isJumpCut = true;
         }
 
-
-        if (!isJumping && !hauntScript.currentlyHaunting) {
-            if (Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0, groundLayer) && !isJumping) {
+        // Reset lastOnGroundTime when touching ground
+        if (jumpDir == 0) {
+            if (Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0, groundLayer)) {
                 lastOnGroundTime = coyoteTime;
             }
         }
+        // Pass through "Platform" tags
+        if(playerOnPlatform && verticalDir < 0) {
+            StartCoroutine(EnableCollider());
+        }    
 
-        if(isJumping && rb.velocity.y < 0) {
-            isJumping = false;
-            isJumpFalling = true;
-        }
-        if(lastOnGroundTime > 0 && !isJumping) {
+    }
+
+    private void PollJumpMechanic() {
+          // Base jump
+        if (lastOnGroundTime > 0 && lastJumpTime > 0) {
             isJumpCut = false;
-            if (!isJumping) {
-                isJumpFalling = false;
-            }
-        }
-        if (!hauntScript.currentlyHaunting && canJump() && lastJumpTime > 0) {
-            isJumping = true;
-            isJumpCut = false;
-            isJumpFalling = false;
             Jump();
+        } // Falling + W key pressed
+        else if (jumpDir == -1 && verticalDir > 0) {
+            rb.gravityScale = gravityScale * floatGravityMult;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
+        } // JumpCut
+        else if (isJumpCut && jumpDir != 0) {
+            rb.gravityScale = gravityScale * jumpCutGravityMult;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+        } // Jumping  
+        else if (jumpDir == 1) {
+            rb.gravityScale = gravityScale;
+        } // Falling 
+        else if (rb.velocity.y < 0) {
+            rb.gravityScale = gravityScale * fallGravityMult;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+        } // Default conditions
+        else {
+            rb.gravityScale = gravityScale;
         }
 
-        if (!hauntScript.currentlyHaunting) {
-            if (isJumpFalling && verticalDir > 0) {
-                setGravityScale(gravityScale * floatGravityMult);
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFloatSpeed));
-            }
-            else if (isJumpCut) {
-                setGravityScale(gravityScale * jumpCutGravityMult);
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-            }
-            else if (isJumping) {
-                setGravityScale(gravityScale);
-            }
-            else if (rb.velocity.y < 0) {
-                setGravityScale(gravityScale * fallGravityMult);
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-            }
-            else {
-                setGravityScale(gravityScale);
-            }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if(collision.gameObject.CompareTag("Platform")) {
+            playerOnPlatform = true;
+        } else {
+            playerOnPlatform = false;
         }
     }
 
+    private IEnumerator EnableCollider() {      
+        col.enabled = false;
+        yield return new WaitForSeconds(0.25f);
+        col.enabled = true;
+    }
+
+
+    //----------------------------------------------------------
+    // Physics related 
+    //----------------------------------------------------------
     private void Jump() {
         lastJumpTime = 0;
         lastOnGroundTime = 0;
@@ -160,8 +176,8 @@ public class BasicMovementScript : NetworkBehaviour
         rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
     }
 
-    private void Run() {
-        float targetSpeed = horizontalDir * moveSpeed;
+    private void ApplyForce() {
+        float targetSpeed = horizontalDir * targetMoveSpeed;
 
         float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? accelAmount : deccelAmount;
 
@@ -172,6 +188,14 @@ public class BasicMovementScript : NetworkBehaviour
     }
 
 
+
+    //----------------------------------------------------------
+    // Get and Set type methods
+    //----------------------------------------------------------
+
+    //----------------------------------------------------------
+    // Miscellaneous methods
+    //----------------------------------------------------------
     public void orientCharacter(bool isMovingRight) {
         if(isMovingRight != isFacingRight) {
             transform.Rotate(0f, 180f, 0f);
@@ -179,38 +203,6 @@ public class BasicMovementScript : NetworkBehaviour
         }
     }
 
-    //----------------------------------------------------------
-    // Get and Set type methods
-    //----------------------------------------------------------
-    public void setGravityScale(float scale) {
-        rb.gravityScale = scale;
-    }
-
-    public void jumpDownInput() {
-        lastJumpTime = jumpBuffer;
-    }
-
-    public void jumpUpInput() {
-        if (canJumpCut()) {
-            isJumpCut = true;
-        }
-    }
-
-    private Vector2 getInput() {
-        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-    }
-
-    private bool canJump() {
-        return lastOnGroundTime > 0 && !isJumping;
-    }
-
-    private bool canJumpCut() {
-        return isJumping && rb.velocity.y > 0;
-    }
-
-    //----------------------------------------------------------
-    // Miscellaneous methods
-    //----------------------------------------------------------
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);

@@ -37,7 +37,6 @@ public class AbilityScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         hauntReset = hauntDuration;
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();

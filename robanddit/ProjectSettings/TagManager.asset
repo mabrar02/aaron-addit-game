@@ -8,6 +8,7 @@ TagManager:
   - Checkpoint
   - Hazard
   - Haunted
+  - Platform
   layers:
   - Default
   - TransparentFX

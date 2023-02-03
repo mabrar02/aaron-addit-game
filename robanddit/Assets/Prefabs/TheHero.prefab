@@ -113,7 +113,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 5
   m_Material: {fileID: 6200000, guid: 03d2c7fef18bf8a49b22e9a41570c789, type: 2}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -155,11 +155,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907f4b7d8677b6342b4b23fad5551d53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 17
+  targetMoveSpeed: 17
   accelAmount: 13
   deccelAmount: 16
   jumpForce: 25
-  gravityScale: 0
   jumpCutGravityMult: 5
   fallGravityMult: 4
   coyoteTime: 0.1
@@ -167,17 +166,16 @@ MonoBehaviour:
   maxFloatSpeed: 7
   jumpBuffer: 0.15
   floatGravityMult: 0.5
-  groundCheck: {fileID: 4754773289779300100}
+  jumpDir: 0
   groundCheckSize: {x: 1.2, y: 0.1}
+  groundCheck: {fileID: 4754773289779300100}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  rb: {fileID: 4754773287812804589}
   isFacingRight: 0
   isJumping: 0
   isJumpCut: 0
   isJumpFalling: 0
-  MovementEnabled: 0
 --- !u!95 &4754773287812804576
 Animator:
   serializedVersion: 4
