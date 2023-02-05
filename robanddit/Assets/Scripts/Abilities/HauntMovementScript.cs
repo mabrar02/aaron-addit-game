@@ -37,7 +37,6 @@ public class HauntMovementScript : MonoBehaviour
     public bool isFacingRight {get; set;}
     public bool isJumping     {get; set;}
     public bool isJumpCut     {get; set;}
-    private bool doneKnockback = false; 
     private bool playerOnPlatform;
 
     //Timers
