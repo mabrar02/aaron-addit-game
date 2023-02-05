@@ -1,0 +1,5 @@
+[Spirit] "Hi there"
+[Spirit] "I know this isn't a lot of dialogue yet, but I just wanted to help you get started on your travels."
+[Spirit] "Click the boulder to haunt into it."
+[Spirit] "Then click out of it to haunt out."
+[Spirit] "Neat isn't it?"
