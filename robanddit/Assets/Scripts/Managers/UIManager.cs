@@ -77,8 +77,8 @@ public class UIManager : MonoBehaviour
         MultiplayerManager.Instance.gameObject.SetActive(false);
         Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
         Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
-
-
+        Destroy(Instance.TheHero.GetComponent<NetworkObject>());
+//        Instance.TheHero.GetComponent<ClientNetworkTransform>().enabled = false;
 
     }
 

@@ -16,8 +16,9 @@ public class PlayerDeath : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Hazard")) {
-            rb.bodyType = RigidbodyType2D.Static;
+            rb.simulated = false;
             sr.enabled = false;
+            gameObject.GetComponent<AbilityScript>().enabled = false;
             gameObject.GetComponent<BasicMovementScript>().enabled = false;
             StartCoroutine(Respawn());
         }
@@ -26,8 +27,11 @@ public class PlayerDeath : MonoBehaviour
     private IEnumerator Respawn() {
         yield return new WaitForSeconds(2);
         transform.position = respawnPoint.position;
-        rb.bodyType = RigidbodyType2D.Dynamic;
+
+        rb.simulated = true;
         sr.enabled = true;
-        this.gameObject.GetComponent<BasicMovementScript>().enabled = true;
+
+        gameObject.GetComponent<BasicMovementScript>().enabled = true;
+        gameObject.GetComponent<AbilityScript>().enabled = true;
     }
 }

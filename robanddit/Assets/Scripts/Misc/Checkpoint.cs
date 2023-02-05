@@ -6,7 +6,8 @@ public class Checkpoint : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.CompareTag("Player")) {
-            collision.GetComponent<PlayerDeath>().respawnPoint.position = this.gameObject.transform.position;
+            collision.GetComponent<PlayerDeath>().respawnPoint = gameObject.transform;
+            collision.GetComponent<holdRestart>().respawnPoint = gameObject.transform;
         }
     }
 }

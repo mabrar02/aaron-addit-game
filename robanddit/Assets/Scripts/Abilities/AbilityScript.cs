@@ -6,44 +6,52 @@ public class AbilityScript : MonoBehaviour
 {
 
     #region VARIABLES
-    private Vector2 mousePos = new Vector2();         //Absolute mouse position
-    private Vector2 DirToMouse = new Vector2(); //Mouse position relative to player's transform
+    private Vector2 mousePos;     //Absolute mouse position
+    private Vector2 dirToMouse;   //Mouse position relative to player's transform
+
     //Player related variables
-    private Rigidbody2D rb;
-    private Collider2D col;
-    private Animator anim;
-    private GameObject arrow;
-    public Color HauntedColour;
-    private Color originalColour;
+    private Rigidbody2D     rb;
+    private Collider2D      col;
+    private Animator        anim;
+    private GameObject      arrow;
+    private SpriteRenderer  sprite;
+
+    // Alpha testing
+    public Color       originalColour;
+    public Color       hauntedColour;
    
     // Haunt related variables
-    [SerializeField] public Vector2 hauntSize;
-    [SerializeField] private float hauntDistance;
+    [SerializeField] private Vector2 hauntCheckSize     = new Vector2(1.5f,1.5f);
+    [SerializeField] private float   hauntDistanceLimit = 100;
+    [SerializeField] private float   hauntInSpeed       = 0.15f;
+    [SerializeField] private float   hauntOutSpeed      = 0.15f;
+    [SerializeField] private float   hauntDuration      = 1.75f;
+    private Collider2D hauntCollider;
+    private GameObject hauntedObject;
+    private float      distToHaunt;
+    private float      hauntDurationCount;
+
+    public bool inRange;
     public bool currentlyHaunting;
     public bool inHauntObj;
-    private Collider2D HauntCollider;
-    [HideInInspector] public GameObject HauntedObject;
-    private Vector2 DirToHaunt;
-    private float DistToHaunt;
-    [SerializeField] private float HauntInSpeed = 10f;
-    [SerializeField] private float HauntOutSpeed = 5f;
-    [SerializeField] private float hauntDuration = 1.5f;
-    private float hauntReset;
-    [HideInInspector] public bool inRange;
 
-    private BasicMovementScript MoveScript;
+    private BasicMovementScript moveScript;
     #endregion
    
     // Start is called before the first frame update
     void Start()
     {
-        hauntReset = hauntDuration;
-        rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
-        anim = GetComponent<Animator>();
-        MoveScript = GetComponent<BasicMovementScript>();
+        hauntDurationCount = 0;
+
+        rb         = GetComponent<Rigidbody2D>();
+        col        = GetComponent<Collider2D>();
+        anim       = GetComponent<Animator>();
+        sprite     = GetComponent<SpriteRenderer>();
+        moveScript = GetComponent<BasicMovementScript>();
+
         currentlyHaunting = false;
-        inHauntObj = false;
+        inHauntObj        = false;
+
         arrow = transform.Find("arrow").gameObject;
     }
 
@@ -53,84 +61,104 @@ public class AbilityScript : MonoBehaviour
         anim.SetBool("inHauntObj", inHauntObj);
 
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        inRange = Vector2.Distance(transform.position, mousePos) <= hauntDistance;
-
-        
+        inRange  = Vector2.Distance(transform.position, mousePos) <= hauntDistanceLimit;
 
         if (!currentlyHaunting && !inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
              checkHauntIn();
         }
-        else if(!currentlyHaunting && inHauntObj && ((Input.GetButtonDown("Fire1")) || (Input.GetKeyDown(KeyCode.Space)))) {
+        else if(!currentlyHaunting && inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
             checkHauntOut();
         }
-        if (inHauntObj) {
-            arrow.SetActive(true);
-            arrow.transform.position = HauntedObject.transform.position + new Vector3(3,3,0);
-        }
-        else {
-            arrow.SetActive(false);
-        }
 
     }
 
-    public void checkHauntIn() {
 
-        HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
-        if (HauntCollider && HauntCollider.CompareTag("Hauntable")) {
-            HauntedObject = HauntCollider.gameObject;
-            originalColour = HauntedObject.GetComponent<SpriteRenderer>().color;
+    //----------------------------------------------------------
+    // checkHauntIn : Checks if a collider under the mouse is on the Hauntable layer + has a Hauntable tag
+    // Starts the coroutine PerformHauntIn to begin haunt
+    //----------------------------------------------------------
+    private void checkHauntIn() {
+        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
 
-            StartCoroutine(PerformHauntIn(HauntedObject));
+        if (hauntCollider && hauntCollider.CompareTag("Hauntable")) {
+            hauntedObject = hauntCollider.gameObject;
+            originalColour = hauntedObject.GetComponent<SpriteRenderer>().color;
+
+            StartCoroutine(PerformHauntIn(hauntedObject));
         }
     }
 
+    //----------------------------------------------------------
+    // PerformHauntIn : 
+    //----------------------------------------------------------
     private IEnumerator PerformHauntIn(GameObject HauntObject) {
-        currentlyHaunting = true;
-        MoveScript.enabled = false;
-        col.enabled = false;
 
-        CalcDistToHaunt();
-        CalcDirToHaunt();
-        CalcDirToMouse();
+        inHauntObj         = false;
+        currentlyHaunting  = true;
+        moveScript.enabled = false;
+        col.enabled        = false;
+        rb.simulated       = false;
 
-        Debug.DrawRay(transform.position, DirToHaunt);
-        Debug.DrawRay(transform.position, DirToMouse);
-        Debug.Log(HauntCollider.gameObject.name);
+        Vector2 dirToHaunt  = calcDirToHaunt();
+        //Debug.DrawRay(transform.position, dirToHaunt);
+        //Debug.DrawRay(transform.position, dirToMouse);
+        //Debug.Log(hauntCollider.gameObject.name);
+        float   distToHaunt = calcDistToHaunt();
 
-        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        Vector2 hauntVel = new Vector2(DirToHaunt.x, DirToHaunt.y) * HauntInSpeed;
+        while (distToHaunt >= 3) {
 
-        while (DistToHaunt >= 3) {
-            rb.velocity = hauntVel;
-            CalcDistToHaunt();
+            dirToHaunt  = calcDirToHaunt();
+            distToHaunt = calcDistToHaunt();
+
+            float angle = Mathf.Atan2(dirToHaunt.y, dirToHaunt.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.position = new Vector3(transform.position.x + dirToHaunt.x * hauntInSpeed, transform.position.y + dirToHaunt.y * hauntInSpeed, 0);
             yield return null;
         }
 
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.velocity = Vector2.zero;
+        sprite.enabled = false;
+
         transform.position = HauntObject.transform.position;
+        transform.rotation = Quaternion.identity;
+
+        arrow.SetActive(true);
+
         inHauntObj = true;
         currentlyHaunting = false;
-        HauntedObject.tag = "Haunted";
-        HauntedObject.GetComponent<SpriteRenderer>().color = HauntedColour;
+
+        hauntedObject.tag = "Haunted";
+
+//        hauntedObject.GetComponent<SpriteRenderer>().color = hauntedColour; // To be replaced
+        if(hauntedObject.GetComponent<HauntMovementScript>()) {
+            hauntedObject.GetComponent<HauntMovementScript>().enabled = true;
+            hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToHaunt, true);
+        }
+
+        gameObject.transform.SetParent(hauntedObject.transform);
 
         yield return null;
 
     }
 
-    public void checkHauntOut() {
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        col.enabled = true;
+    //----------------------------------------------------------
+    // checkHauntOut : 
+    //----------------------------------------------------------
+    private void checkHauntOut() {
 
-        HauntCollider = Physics2D.OverlapBox(mousePos, hauntSize, 0);
-        HauntedObject.tag = "Hauntable";
-        HauntedObject.GetComponent<SpriteRenderer>().color = Color.white;
+        sprite.enabled = true;
+        hauntedObject.tag = "Hauntable";
+//        hauntedObject.GetComponent<SpriteRenderer>().color = Color.white; // To be replaced
 
-        if (HauntCollider && HauntCollider.CompareTag("Hauntable") && Vector2.Distance(transform.position, mousePos) <= hauntDistance) {
-            HauntedObject = HauntCollider.gameObject;
-            StartCoroutine(PerformHauntIn(HauntedObject));
+        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
+
+        if (hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
+        if(hauntedObject.GetComponent<HauntMovementScript>()) {
+            hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
+            hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
+        }
+            hauntedObject = hauntCollider.gameObject;
+
+            StartCoroutine(PerformHauntIn(hauntedObject));
         }
         else {
             StartCoroutine(PerformHauntOut());
@@ -138,71 +166,91 @@ public class AbilityScript : MonoBehaviour
         
     }
 
-
-
+    //----------------------------------------------------------
+    // PerformHauntOut : 
+    //----------------------------------------------------------
     private IEnumerator PerformHauntOut() {
+        inHauntObj        = false;
         currentlyHaunting = true;
-        inHauntObj = false;
-        
-       
-        CalcDirToMouse();
 
-        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        MoveScript.enabled = true;
+        arrow.SetActive(false);      
+
+        Vector2 dirToMouse = calcDirToMouse();
+
+        if(hauntedObject.GetComponent<HauntMovementScript>()) {
+            hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
+            hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
+        }
+
+        hauntDurationCount = hauntDuration;
 
         while (currentlyHaunting) {
-            if(hauntDuration > 0) {
-                hauntDuration -= Time.deltaTime;
-                rb.velocity = DirToMouse * HauntOutSpeed;
+            if(hauntDurationCount > 0) {
+                // Since Time.deltaTime is frame rate dependent, rather not use it for haunt out position determination
+                hauntDurationCount -= 0.01f;
+
+                float angle = Mathf.Atan2(dirToMouse.y, dirToMouse.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.position = new Vector3(transform.position.x + dirToMouse.x * hauntOutSpeed, transform.position.y + dirToMouse.y * hauntOutSpeed, 0);
             }
             else {
+
+                gameObject.transform.parent = null;
                 currentlyHaunting = false;
-                hauntDuration = hauntReset;
-                rb.velocity = new Vector2(rb.velocity.x, DirToMouse.y);
-                transform.rotation = Quaternion.identity;
-                MoveScript.isFacingRight = true;
-                if (DirToMouse.x >= 0) {
-                    MoveScript.orientCharacter(true);
+                col.enabled = true;
+
+                moveScript.enabled = true;
+
+                rb.simulated = true;
+                rb.velocity  = new Vector2(transform.position.x + dirToMouse.x, transform.position.y + dirToMouse.y);
+
+                calcDirToMouse();
+
+                if (dirToMouse.x >= 0) {
+                    moveScript.isFacingRight = true;
+                    transform.rotation = Quaternion.identity;
                 }
                 else {
-                    MoveScript.orientCharacter(false);
+                    moveScript.isFacingRight = false;
+                    transform.rotation = Quaternion.AngleAxis(180, Vector3.up);;
                 }
             }
             
             yield return null;
         }
-
-        
-        
-
-        MoveScript.isJumpCut = false;
-        MoveScript.isJumping = false;
-        MoveScript.isJumpFalling = true;
-        Debug.Log(MoveScript.isFacingRight);
+            
+        moveScript.isJumpCut = false;
+        moveScript.isJumping = false;
 
         yield return null;
     }
 
 
-
+    //----------------------------------------------------------
+    // calculation methods 
+    //----------------------------------------------------------
 
     //----------------------------------------------------------
-    // Calculation methods 
+    // calcDirToHaunt()
     //----------------------------------------------------------
-    private void CalcDirToHaunt() {
-        DirToHaunt = (Vector2)HauntedObject.transform.position - (Vector2)transform.position;
-        DirToHaunt = DirToHaunt.normalized;
+    private Vector2 calcDirToHaunt() {
+        Vector2 x = (Vector2)hauntedObject.transform.position - (Vector2)transform.position;
+        return x.normalized;
     }
 
-    private void CalcDirToMouse() {
-        DirToMouse = mousePos - (Vector2)transform.position;
-        DirToMouse = DirToMouse.normalized;
+    //----------------------------------------------------------
+    // calcDirToMouse()
+    //----------------------------------------------------------
+    private Vector2 calcDirToMouse() {
+        Vector2 x = mousePos - (Vector2)transform.position;
+        return x.normalized;
     }
 
-    private void CalcDistToHaunt() {
-        DistToHaunt = ((Vector2)HauntedObject.transform.position - (Vector2)transform.position).magnitude;
+    //----------------------------------------------------------
+    // calcDistToHaunt()
+    //----------------------------------------------------------
+    private float calcDistToHaunt() {
+        return ((Vector2)hauntedObject.transform.position - (Vector2)transform.position).magnitude;
     }
 
 
@@ -211,6 +259,8 @@ public class AbilityScript : MonoBehaviour
     //----------------------------------------------------------
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(mousePos, hauntSize);
+        Gizmos.DrawWireCube(mousePos, hauntCheckSize);
     }
+
+
 }
