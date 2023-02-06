@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO List:
+//  - Somehow stop haunt progression from phasing through objects
+//  -
+
+
+
 public class AbilityScript : MonoBehaviour
 {
 
@@ -145,22 +151,26 @@ public class AbilityScript : MonoBehaviour
     //----------------------------------------------------------
     private void checkHauntOut() {
 
-        sprite.enabled = true;
-        hauntedObject.tag = "Hauntable";
 //        hauntedObject.GetComponent<SpriteRenderer>().color = Color.white; // To be replaced
 
         hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
 
-        if (hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
-        if(hauntedObject.GetComponent<HauntMovementScript>()) {
-            hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
-            hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
-        }
-            hauntedObject = hauntCollider.gameObject;
+        if(hauntCollider && hauntCollider.CompareTag("Haunted")) return ;
 
-            StartCoroutine(PerformHauntIn(hauntedObject));
-        }
-        else {
+        hauntedObject.tag = "Hauntable";
+        sprite.enabled = true;
+
+        if(hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
+
+            if(hauntedObject.GetComponent<HauntMovementScript>()) {
+                hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
+                hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
+            }
+                hauntedObject = hauntCollider.gameObject;
+    
+                StartCoroutine(PerformHauntIn(hauntedObject));
+         
+        } else {
             StartCoroutine(PerformHauntOut());
         }
         
