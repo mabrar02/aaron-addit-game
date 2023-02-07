@@ -36,10 +36,10 @@ public class MultiplayerManager : MonoBehaviour
 
     public static MultiplayerManager Instance { get; private set;}
 
-    public static string JoinCode  { get; set;}
-    public static string Profile   { get; set;}
-    public static string Transport { get; set;}
-    public static string Mode      { get; set;}
+    public static string joinCode  { get; set;}
+    public static string profile   { get; set;}
+    public static string transport { get; set;}
+    public static string mode      { get; set;}
 
     [SerializeField] private GameObject TheHero;
 
@@ -52,41 +52,33 @@ public class MultiplayerManager : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    // Dumb seperation required to mesh the worlds of async and coroutines 
+    //----------------------------------------------------------
+    async public void startHostTop() {
+        await setupAuthentication("prof1");
+        StartCoroutine(StartHostSetup());
+    }
+
+    async public void startClientTop() {
+        await setupAuthentication("prof1");
+        StartCoroutine(StartClientSetup());
+
+    }
+
+    //----------------------------------------------------------
     // Authentication process 
     //----------------------------------------------------------
-    async void Start()	{
+    async Task setupAuthentication(string profile)	{
         var unityAutheticationInitOptions = new InitializationOptions();
 
-        unityAutheticationInitOptions.SetProfile("prof1");
+        unityAutheticationInitOptions.SetProfile(profile);
 
         await UnityServices.InitializeAsync(unityAutheticationInitOptions);
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();  
 	}
+
     
-     async public void SwitchProfiles(string profile) {
-        AuthenticationService.Instance.SignOut();
-
-        AuthenticationService.Instance.SwitchProfile(profile);
-
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-  
-    }
-
-    //----------------------------------------------------------
-    // Entry points for UI buttons. Everything below these two should be private 
-    //----------------------------------------------------------
-    public void StartHost() {
-        StartCoroutine(StartHostSetup());
-
-    }
-
-    public void StartClient() {
-        UIManager.Instance.SetJoinCode();
-        StartCoroutine(StartClientSetup());
-
-    }
-
     //----------------------------------------------------------
     // Connection setup coroutines 
     // Requires Authentication to have run first
@@ -96,10 +88,11 @@ public class MultiplayerManager : MonoBehaviour
     private IEnumerator StartHostSetup() {
         yield return SetupHost();
 
-        Mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-        Transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
-        Profile = AuthenticationService.Instance.Profile;
-        UIManager.Instance.SetConnectionInfo();
+        joinCode = GameState.joinCode; 
+        mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        profile = AuthenticationService.Instance.Profile;
+        GameMenuManager.Instance.SetConnectionInfo();
 
         // TODO: Sets the camera to only follow host for now but this is wrong
         TheHero = GameObject.FindGameObjectWithTag("Player"); 
@@ -107,12 +100,13 @@ public class MultiplayerManager : MonoBehaviour
     }
 
     private IEnumerator StartClientSetup() {
-        yield return SetupClient(JoinCode);
+        joinCode = GameState.joinCode;
+        yield return SetupClient(joinCode);
 
-        Mode = "Client";
-        Transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
-        Profile = AuthenticationService.Instance.Profile;
-        UIManager.Instance.SetConnectionInfo();
+        mode = "Client";
+        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        profile = AuthenticationService.Instance.Profile;
+        GameMenuManager.Instance.SetConnectionInfo();
 
         //Camera controls for multiplayer
 //        TheHero = GameObject.FindGameObjectWithTag("Player"); 
@@ -138,7 +132,7 @@ public class MultiplayerManager : MonoBehaviour
         }
         var (ipv4address, port, allocationIdBytes, connectionData, key, joinCode) = ServerRelay.Result;
 
-        JoinCode = joinCode; 
+        GameState.joinCode = joinCode; 
 
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(ipv4address, port, allocationIdBytes, key, connectionData, true);
 
