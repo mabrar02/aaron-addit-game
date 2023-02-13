@@ -36,14 +36,10 @@ public class MultiplayerManager : MonoBehaviour
 
     public static MultiplayerManager Instance { get; private set;}
 
-    public static string joinCode  { get; set;}
-    public static string profile   { get; set;}
-    public static string transport { get; set;}
-    public static string mode      { get; set;}
-
-    [SerializeField] private GameObject TheHero;
-
-    [SerializeField] private GameObject CMCam;
+    public string joinCode;
+    public string profile;
+    public string transport;
+    public string mode;
 
     // Singleton pattern
     void Awake () {
@@ -54,15 +50,22 @@ public class MultiplayerManager : MonoBehaviour
     //----------------------------------------------------------
     // Dumb seperation required to mesh the worlds of async and coroutines 
     //----------------------------------------------------------
-    async public void startHostTop() {
-        await setupAuthentication("prof1");
-        StartCoroutine(StartHostSetup());
+    public IEnumerator startHostTop() {
+        var x = setupAuthentication("prof1"); 
+        while(!x.IsCompleted)
+        {
+            yield return null;
+        }
+        yield return StartCoroutine(StartHostSetup());
     }
 
-    async public void startClientTop() {
-        await setupAuthentication("prof1");
-        StartCoroutine(StartClientSetup());
-
+    public IEnumerator startClientTop() {
+        var x = setupAuthentication("prof2"); 
+        while(!x.IsCompleted)
+        {
+            yield return null;
+        }
+        yield return StartCoroutine(StartClientSetup());
     }
 
     //----------------------------------------------------------
@@ -74,8 +77,10 @@ public class MultiplayerManager : MonoBehaviour
         unityAutheticationInitOptions.SetProfile(profile);
 
         await UnityServices.InitializeAsync(unityAutheticationInitOptions);
-
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();  
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();  
+        }
 	}
 
     
@@ -89,28 +94,20 @@ public class MultiplayerManager : MonoBehaviour
         yield return SetupHost();
 
         joinCode = GameState.joinCode; 
-        mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
-        profile = AuthenticationService.Instance.Profile;
-        GameMenuManager.Instance.SetConnectionInfo();
+        GameState.mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+        GameState.transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        GameState.profile = AuthenticationService.Instance.Profile;
 
-        // TODO: Sets the camera to only follow host for now but this is wrong
-        TheHero = GameObject.FindGameObjectWithTag("Player"); 
-        CMCam.GetComponent<CinemachineVirtualCamera>().Follow = TheHero.transform; 
     }
 
     private IEnumerator StartClientSetup() {
         joinCode = GameState.joinCode;
         yield return SetupClient(joinCode);
 
-        mode = "Client";
-        transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
-        profile = AuthenticationService.Instance.Profile;
-        GameMenuManager.Instance.SetConnectionInfo();
+        GameState.mode = "Client";
+        GameState.transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
+        GameState.profile = AuthenticationService.Instance.Profile;
 
-        //Camera controls for multiplayer
-//        TheHero = GameObject.FindGameObjectWithTag("Player"); 
-//        CMCam.GetComponent<CinemachineVirtualCamera>().Follow = TheHero.transform; 
     }
 
 

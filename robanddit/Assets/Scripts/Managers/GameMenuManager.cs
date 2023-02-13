@@ -15,9 +15,6 @@ public class GameMenuManager : MonoBehaviour
 {
     public static GameMenuManager Instance { get; private set;}
 
-    public GameObject TheHero;  
-    public GameObject CMCam;
-
     IDictionary<string, GameObject> UICanvasChildren = new Dictionary<string, GameObject>();
 
     // Singleton pattern
@@ -34,23 +31,10 @@ public class GameMenuManager : MonoBehaviour
             UICanvasChildren.Add(gameObject.transform.GetChild(i).gameObject.name, gameObject.transform.GetChild(i).gameObject);
         }
 
-        setScreen();
+        setConnectionInfo();
 
-        if(GameState.singleplayer) {
-            setSinglePlayer();
-        } else if(GameState.host) {
-            MultiplayerManager.Instance.startHostTop();
-        } else {
-            MultiplayerManager.Instance.startClientTop();
-        }
 
     }
-
-    // Update is called once per frame
-    private void Update() {
-
-    }
-    
 
     //----------------------------------------------------------
     // 
@@ -65,23 +49,23 @@ public class GameMenuManager : MonoBehaviour
         if(key != "") UICanvasChildren[key].SetActive(true);
     }
 
-    public void SetConnectionInfo() {
+    public void setConnectionInfo() {
 
         setScreen("ConnectionInfo");
        
-        UICanvasChildren["ConnectionInfo"].transform.Find("code").GetComponent<TextMeshProUGUI>().text      = MultiplayerManager.joinCode;
-        UICanvasChildren["ConnectionInfo"].transform.Find("mode").GetComponent<TextMeshProUGUI>().text      = MultiplayerManager.mode;
-        UICanvasChildren["ConnectionInfo"].transform.Find("transport").GetComponent<TextMeshProUGUI>().text = MultiplayerManager.transport;
-        UICanvasChildren["ConnectionInfo"].transform.Find("profile").GetComponent<TextMeshProUGUI>().text   = MultiplayerManager.profile;
+        UICanvasChildren["ConnectionInfo"].transform.Find("code").GetComponent<TextMeshProUGUI>().text      = GameState.joinCode;
+        UICanvasChildren["ConnectionInfo"].transform.Find("mode").GetComponent<TextMeshProUGUI>().text      = GameState.mode;
+        UICanvasChildren["ConnectionInfo"].transform.Find("transport").GetComponent<TextMeshProUGUI>().text = GameState.transport;
+        UICanvasChildren["ConnectionInfo"].transform.Find("profile").GetComponent<TextMeshProUGUI>().text   = GameState.profile;
                 
     }
 
 
-    private void setSinglePlayer() {
-       NetworkManager.Singleton.gameObject.SetActive(false);
-       MultiplayerManager.Instance.gameObject.SetActive(false);
-       Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
-       Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
-       Destroy(Instance.TheHero.GetComponent<NetworkObject>());
-    }
+//    private void setSinglePlayer() {
+//       NetworkManager.Singleton.gameObject.SetActive(false);
+//       MultiplayerManager.Instance.gameObject.SetActive(false);
+//       Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
+//       Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
+//       Destroy(Instance.TheHero.GetComponent<NetworkObject>());
+//    }
 }

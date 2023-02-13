@@ -17,6 +17,23 @@ public class StartMenuManager : MonoBehaviour
 
     IDictionary<string, GameObject> UICanvasChildren = new Dictionary<string, GameObject>();
 
+    [SerializeField] private Button hostButton;
+    [SerializeField] private Button joinGameButton;
+    [SerializeField] private Button singleplayerButton;
+    [SerializeField] private Button QuitButton;
+
+    [SerializeField] private Button scene1Button;
+    [SerializeField] private Button scene2Button;
+    [SerializeField] private Button scene3Button;
+    [SerializeField] private Button scene4Button;
+    [SerializeField] private Button scene5Button;
+    [SerializeField] private Button scene6Button;
+    [SerializeField] private Button scene7Button;
+    [SerializeField] private Button scene8Button;
+
+    [SerializeField] private Button joinButton;
+    [SerializeField] private TMP_Text loadingText;
+
     // Singleton pattern
     void Awake() {
         if(Instance != null && Instance != this) { Destroy(this);}
@@ -31,19 +48,29 @@ public class StartMenuManager : MonoBehaviour
             UICanvasChildren.Add(gameObject.transform.GetChild(i).gameObject.name, gameObject.transform.GetChild(i).gameObject);
         }
 
+        hostButton.onClick.AddListener(() => StartCoroutine(hostGame()));
+        joinGameButton.onClick.AddListener(() => setScreen("JoinMenu"));
+        singleplayerButton.onClick.AddListener(() => setScreen("SceneMenu"));
+        QuitButton.onClick.AddListener(() => Application.Quit());
+
+        joinButton.onClick.AddListener(() => StartCoroutine(joinGame()));
+
+        scene1Button.onClick.AddListener(() => loadScene("startScene"));
+        scene2Button.onClick.AddListener(() => loadScene("Scene2"));
+        scene3Button.onClick.AddListener(() => loadScene("Scene3"));
+        scene4Button.onClick.AddListener(() => loadScene("Scene4"));
+        scene5Button.onClick.AddListener(() => loadScene("Scene5"));
+        scene6Button.onClick.AddListener(() => loadScene("Scene6"));
+        scene7Button.onClick.AddListener(() => loadScene("Scene7"));
+        scene8Button.onClick.AddListener(() => loadScene("Scene8"));
+
         setScreen("StartMenu");
     }
 
-    // Update is called once per frame
-    private void Update() {
-
-    }
-    
 
     //----------------------------------------------------------
     // 
     //----------------------------------------------------------
-
     private void setScreen(string key = "") {
 
         foreach(var x in UICanvasChildren) {
@@ -53,39 +80,30 @@ public class StartMenuManager : MonoBehaviour
         if(key != "") UICanvasChildren[key].SetActive(true);
     }
 
-
-    public void setHost() {
-        GameState.singleplayer = false;
-        GameState.host         = true;
-        SceneManager.LoadScene("startScene");
+    private void loadScene(string sceneName) {
+        NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
 
-    public void joinGameScreen() {
-        setScreen("JoinMenu");
+     private IEnumerator hostGame() {
+        yield return StartCoroutine(MultiplayerManager.Instance.startHostTop());
+        setScreen("SceneMenu");
     }
 
-    public void joinGame() {
+    private IEnumerator joinGame() {
+
         GameState.joinCode = UICanvasChildren["JoinMenu"].transform.Find("code").GetComponent<TMP_InputField>().text;
-        GameState.singleplayer = false;
-        GameState.host         = false;
-        SceneManager.LoadScene("startScene");
+        joinButton.gameObject.SetActive(false);
+        loadingText.text = "Loading...";
+        yield return StartCoroutine(MultiplayerManager.Instance.startClientTop());   
+
     }
 
-    public void setSinglePlayer() {
-        GameState.singleplayer = true;
-        GameState.host         = false;
-        SceneManager.LoadScene("startScene");
-    }
-
-
-//        setScreen();
-//
-//        NetworkManager.Singleton.gameObject.SetActive(false);
-//        MultiplayerManager.Instance.gameObject.SetActive(false);
-//        Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
-//        Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
-//        Destroy(Instance.TheHero.GetComponent<NetworkObject>());
+//    public void setSinglePlayer() {
+//        GameState.singleplayer = true;
+//        GameState.host         = false;
+//        SceneManager.LoadScene("startScene");
+//    }
 
 
 

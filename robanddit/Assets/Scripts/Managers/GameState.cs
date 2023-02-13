@@ -1,7 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Services.Core;
+using UnityEngine;
 
+public class GameState : MonoBehaviour {
 
-public static class GameState {
-
+    public static GameState Instance { get; private set; }
 
     public static bool singleplayer { get; set;}
     public static bool host         { get; set;}
