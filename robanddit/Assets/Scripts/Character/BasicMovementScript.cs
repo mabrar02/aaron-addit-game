@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BasicMovementScript : MonoBehaviour 
+public class BasicMovementScript : NetworkBehaviour 
 {
     #region VARIABLES
     [Header("Run Variables")]
@@ -61,12 +62,16 @@ public class BasicMovementScript : MonoBehaviour
 
     // Update is called once per frame
     public void Update() {
+        if (!IsOwner) return;
+
         if (!hauntScript.currentlyHaunting) {
             BasicMovement();
         }
     }
     
     public void FixedUpdate() {
+        if (!IsOwner) return;
+
         if (!hauntScript.currentlyHaunting) {
             ApplyForce();
             PollJumpMechanic();

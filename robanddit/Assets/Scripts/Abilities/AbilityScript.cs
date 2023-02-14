@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 // TODO List:
@@ -8,7 +9,7 @@ using UnityEngine;
 
 
 
-public class AbilityScript : MonoBehaviour
+public class AbilityScript : NetworkBehaviour 
 {
 
     #region VARIABLES
@@ -42,6 +43,8 @@ public class AbilityScript : MonoBehaviour
     public bool inHauntObj;
 
     private BasicMovementScript moveScript;
+    public NetworkObjectReference ob_ref;
+
     #endregion
    
     // Start is called before the first frame update
@@ -62,6 +65,7 @@ public class AbilityScript : MonoBehaviour
     }
 
     void Update() {
+        if(!IsOwner) return;
 
         anim.SetBool("currentlyHaunting", currentlyHaunting);
         anim.SetBool("inHauntObj", inHauntObj);
@@ -136,15 +140,28 @@ public class AbilityScript : MonoBehaviour
 
 //        hauntedObject.GetComponent<SpriteRenderer>().color = hauntedColour; // To be replaced
         if(hauntedObject.GetComponent<HauntMovementScript>()) {
+
+            ob_ref = new NetworkObjectReference(hauntedObject);
+            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref);
+
             hauntedObject.GetComponent<HauntMovementScript>().enabled = true;
             hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToHaunt, true);
         }
 
-        gameObject.transform.SetParent(hauntedObject.transform);
+//        gameObject.transform.SetParent(hauntedObject.transform);
 
         yield return null;
 
     }
+    [ServerRpc]
+     void changeHauntOwnershipServerRpc(ulong OwnerClientId, NetworkObjectReference ob_ref)
+    {
+            NetworkObject net_ob;
+            ob_ref.TryGet(out net_ob);
+            net_ob.gameObject.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+    }
+
+
 
     //----------------------------------------------------------
     // checkHauntOut : 

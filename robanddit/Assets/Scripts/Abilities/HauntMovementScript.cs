@@ -54,10 +54,12 @@ public class HauntMovementScript : MonoBehaviour
 
     // Update is called once per frame
     public void Update() {
+
         BasicMovement();
     }
     
     public void FixedUpdate() {
+
         ApplyForce();
         PollJumpMechanic();
     }
