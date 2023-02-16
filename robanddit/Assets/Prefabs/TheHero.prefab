@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 4654017433316379540}
   - component: {fileID: -7995154921591745627}
   - component: {fileID: 4051364584534437064}
-  - component: {fileID: 7082870797265811342}
+  - component: {fileID: 3792915626347191981}
   m_Layer: 2
   m_Name: TheHero
   m_TagString: Player
@@ -271,7 +271,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &7082870797265811342
+--- !u!114 &3792915626347191981
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -292,11 +292,13 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0.1
+  PositionThreshold: 0
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+  maxInterpTime: 0.005
+  applyOnce: 1
 --- !u!1 &4754773289779300101
 GameObject:
   m_ObjectHideFlags: 0

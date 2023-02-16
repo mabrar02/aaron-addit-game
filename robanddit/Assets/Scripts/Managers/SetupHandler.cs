@@ -12,7 +12,7 @@ public class SetupHandler : NetworkBehaviour
     void Start()
     {
         enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
-        if (IsClient)
+        if (IsClient || IsHost)
         {
             NetworkObject _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
             if(_player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated == false) {
@@ -21,11 +21,6 @@ public class SetupHandler : NetworkBehaviour
 
         }
 
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
     }
 
 
@@ -37,6 +32,5 @@ public class SetupHandler : NetworkBehaviour
         if(_player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated == false) {
             _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
         }
-       
     }
 }

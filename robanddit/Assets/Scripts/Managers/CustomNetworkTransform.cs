@@ -10,7 +10,6 @@ namespace Unity.Netcode.Components
     /// The replicated value will be automatically be interpolated (if active) and applied to the underlying GameObject's transform.
     /// </summary>
     [DisallowMultipleComponent]
-    [AddComponentMenu("Netcode/Network Transform")]
     [DefaultExecutionOrder(100000)] // this is needed to catch the update time after the transform was updated by user scripts
     public class CustomNetworkTransform : NetworkBehaviour
     {
@@ -393,6 +392,8 @@ namespace Unity.Netcode.Components
         /// </summary>
         public float maxInterpTime = 0.005f; // 0.005f;
 
+        public bool applyOnce = true;
+
 
         /// <summary>
         /// Used to determine who can write to this transform. Server only for this transform.
@@ -680,7 +681,7 @@ namespace Unity.Netcode.Components
             // We always apply the interpolated state for any axis we are synchronizing even when the state has no deltas
             // to assure we fully interpolate to our target even after we stop extrapolating 1 tick later.
             var useInterpolatedValue = !networkState.IsTeleportingNextFrame && Interpolate;
-            if (useInterpolatedValue)
+            if (useInterpolatedValue && !applyOnce)
             {
                 if (SyncPositionX) { adjustedPosition.x = m_PositionXInterpolator.GetInterpolatedValue(); }
                 if (SyncPositionY) { adjustedPosition.y = m_PositionYInterpolator.GetInterpolatedValue(); }
@@ -712,6 +713,8 @@ namespace Unity.Netcode.Components
                 if (networkState.HasRotAngleX) { adjustedRotAngles.x = networkState.RotAngleX; }
                 if (networkState.HasRotAngleY) { adjustedRotAngles.y = networkState.RotAngleY; }
                 if (networkState.HasRotAngleZ) { adjustedRotAngles.z = networkState.RotAngleZ; }
+
+                applyOnce = false;
             }
 
             // NOTE: The below conditional checks for applying axial values are required in order to
