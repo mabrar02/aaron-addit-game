@@ -392,7 +392,6 @@ namespace Unity.Netcode.Components
         /// </summary>
         public float maxInterpTime = 0.005f; // 0.005f;
 
-        public bool applyOnce = true;
 
 
         /// <summary>
@@ -681,7 +680,7 @@ namespace Unity.Netcode.Components
             // We always apply the interpolated state for any axis we are synchronizing even when the state has no deltas
             // to assure we fully interpolate to our target even after we stop extrapolating 1 tick later.
             var useInterpolatedValue = !networkState.IsTeleportingNextFrame && Interpolate;
-            if (useInterpolatedValue && !applyOnce)
+            if (useInterpolatedValue)
             {
                 if (SyncPositionX) { adjustedPosition.x = m_PositionXInterpolator.GetInterpolatedValue(); }
                 if (SyncPositionY) { adjustedPosition.y = m_PositionYInterpolator.GetInterpolatedValue(); }
@@ -697,7 +696,8 @@ namespace Unity.Netcode.Components
                     if (SyncRotAngleX) { adjustedRotAngles.x = interpolatedEulerAngles.x; }
 //                    if (SyncRotAngleY) { adjustedRotAngles.y = interpolatedEulerAngles.y; }
                     if (networkState.HasRotAngleY) { adjustedRotAngles.y = networkState.RotAngleY; }
-                    if (SyncRotAngleZ) { adjustedRotAngles.z = interpolatedEulerAngles.z; }
+//                    if (SyncRotAngleZ) { adjustedRotAngles.z = interpolatedEulerAngles.z; }
+                    if (networkState.HasRotAngleZ) { adjustedRotAngles.z = networkState.RotAngleZ; }
                 }
             }
             else
@@ -714,7 +714,6 @@ namespace Unity.Netcode.Components
                 if (networkState.HasRotAngleY) { adjustedRotAngles.y = networkState.RotAngleY; }
                 if (networkState.HasRotAngleZ) { adjustedRotAngles.z = networkState.RotAngleZ; }
 
-                applyOnce = false;
             }
 
             // NOTE: The below conditional checks for applying axial values are required in order to

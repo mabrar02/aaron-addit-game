@@ -7,8 +7,6 @@ using UnityEngine;
 //  - Somehow stop haunt progression from phasing through objects
 //  -
 
-
-
 public class AbilityScript : NetworkBehaviour 
 {
 
@@ -136,32 +134,60 @@ public class AbilityScript : NetworkBehaviour
         inHauntObj = true;
         currentlyHaunting = false;
 
-        hauntedObject.tag = "Haunted";
-
 //        hauntedObject.GetComponent<SpriteRenderer>().color = hauntedColour; // To be replaced
         if(hauntedObject.GetComponent<HauntMovementScript>()) {
 
             ob_ref = new NetworkObjectReference(hauntedObject);
-            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref);
+            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
 
             hauntedObject.GetComponent<HauntMovementScript>().enabled = true;
             hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToHaunt, true);
         }
 
-//        gameObject.transform.SetParent(hauntedObject.transform);
 
         yield return null;
 
     }
     [ServerRpc]
-     void changeHauntOwnershipServerRpc(ulong OwnerClientId, NetworkObjectReference ob_ref)
+     void changeHauntOwnershipServerRpc(ulong OwnerClientId, NetworkObjectReference ob_ref, string entry)
     {
-            NetworkObject net_ob;
-            ob_ref.TryGet(out net_ob);
-            net_ob.gameObject.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+        NetworkObject net_ob;
+        ob_ref.TryGet(out net_ob);
+
+        switch(entry)
+        {
+            case "In" :
+                gameObject.transform.parent.SetParent(net_ob.transform);
+                net_ob.ChangeOwnership(OwnerClientId);
+                changeHauntParametersClientRpc(ob_ref, entry);
+                break;
+            case "Out":
+                gameObject.transform.parent.SetParent(null);
+                net_ob.RemoveOwnership();
+                changeHauntParametersClientRpc(ob_ref, entry);
+                break;
+        }
+
     }
 
+    [ClientRpc]
+    void changeHauntParametersClientRpc(NetworkObjectReference ob_ref, string entry)
+    {
+        NetworkObject net_ob;
+        ob_ref.TryGet(out net_ob);
 
+        switch(entry)
+        {
+            case "In" :
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                net_ob.tag = "Haunted";
+                break;
+            case "Out":
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                net_ob.tag = "Hauntable";
+                break;
+        }
+    }
 
     //----------------------------------------------------------
     // checkHauntOut : 
@@ -174,8 +200,7 @@ public class AbilityScript : NetworkBehaviour
 
         if(hauntCollider && hauntCollider.CompareTag("Haunted")) return ;
 
-        hauntedObject.tag = "Hauntable";
-        sprite.enabled = true;
+        changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "Out");
 
         if(hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
 
@@ -222,7 +247,6 @@ public class AbilityScript : NetworkBehaviour
             }
             else {
 
-                gameObject.transform.parent = null;
                 currentlyHaunting = false;
                 col.enabled = true;
 

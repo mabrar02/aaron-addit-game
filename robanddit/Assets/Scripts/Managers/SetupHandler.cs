@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using System;
+using Cinemachine;
 
 public class SetupHandler : NetworkBehaviour
 {
-
+    public CinemachineVirtualCamera cam; 
     public NetworkObject _player;
+
     // Start is called before the first frame update
     void Start()
     {
         enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
-        if (IsClient || IsHost)
-        {
-            NetworkObject _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            if(_player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated == false) {
-                _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
-            }
-
+         _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        if(_player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated == false) {
+            _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
         }
+        cam.Follow = _player.transform.GetChild(0).transform;
 
     }
 
