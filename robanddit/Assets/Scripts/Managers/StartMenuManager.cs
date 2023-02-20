@@ -19,7 +19,7 @@ public class StartMenuManager : MonoBehaviour
 
     [SerializeField] private Button hostButton;
     [SerializeField] private Button joinGameButton;
-    [SerializeField] private Button singleplayerButton;
+    [SerializeField] private Button optionsButton;
     [SerializeField] private Button QuitButton;
 
     [SerializeField] private Button scene1Button;
@@ -50,7 +50,7 @@ public class StartMenuManager : MonoBehaviour
 
         hostButton.onClick.AddListener(() => StartCoroutine(hostGame()));
         joinGameButton.onClick.AddListener(() => setScreen("JoinMenu"));
-        singleplayerButton.onClick.AddListener(() => setScreen("SceneMenu"));
+        optionsButton.onClick.AddListener(() => setScreen("OptionsMenu"));
         QuitButton.onClick.AddListener(() => Application.Quit());
 
         joinButton.onClick.AddListener(() => StartCoroutine(joinGame()));

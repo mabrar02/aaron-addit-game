@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfad1c0f3ca37414e98114c7d950967d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sr: {fileID: 1270608617356274172}
   respawnPoint: {fileID: 136770722002419050, guid: edc98f26bfe1ec74db8f70bbb279763f, type: 3}
 --- !u!114 &300538259
 MonoBehaviour:

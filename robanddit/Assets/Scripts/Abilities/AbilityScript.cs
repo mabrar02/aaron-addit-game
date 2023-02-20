@@ -76,6 +76,16 @@ public class AbilityScript : NetworkBehaviour
             checkHauntOut();
         }
 
+        if(currentlyHaunting && !IsHost)
+        {
+            sprite.color = Color.red;
+        } else if(currentlyHaunting && IsHost) { 
+            sprite.color = Color.blue;
+        } else  {
+            sprite.color = Color.white;
+        }
+
+
     }
 
 
@@ -104,6 +114,8 @@ public class AbilityScript : NetworkBehaviour
         moveScript.enabled = false;
         col.enabled        = false;
         rb.simulated       = false;
+
+
 
         Vector2 dirToHaunt  = calcDirToHaunt();
         //Debug.DrawRay(transform.position, dirToHaunt);
