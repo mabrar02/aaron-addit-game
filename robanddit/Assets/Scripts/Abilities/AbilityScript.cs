@@ -17,9 +17,9 @@ public class AbilityScript : NetworkBehaviour
     //Player related variables
     private Rigidbody2D     rb;
     private Collider2D      col;
-    private Animator        anim;
+    public Animator        anim;
     private GameObject      arrow;
-    private SpriteRenderer  sprite;
+    public SpriteRenderer  sprite;
 
     // Alpha testing
     public Color       originalColour;
@@ -52,8 +52,6 @@ public class AbilityScript : NetworkBehaviour
 
         rb         = GetComponent<Rigidbody2D>();
         col        = GetComponent<Collider2D>();
-        anim       = GetComponent<Animator>();
-        sprite     = GetComponent<SpriteRenderer>();
         moveScript = GetComponent<BasicMovementScript>();
 
         currentlyHaunting = false;
@@ -179,11 +177,11 @@ public class AbilityScript : NetworkBehaviour
         switch(entry)
         {
             case "In" :
-                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                sprite.enabled = false;
                 net_ob.tag = "Haunted";
                 break;
             case "Out":
-                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                sprite.enabled = true;
                 net_ob.tag = "Hauntable";
                 break;
         }

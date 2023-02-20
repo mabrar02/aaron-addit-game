@@ -30,7 +30,7 @@ public class BasicMovementScript : NetworkBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     private Rigidbody2D rb;
-    private Animator anim;
+    public  Animator anim;
     private Collider2D col;
     private AbilityScript hauntScript;
     
@@ -47,13 +47,10 @@ public class BasicMovementScript : NetworkBehaviour
 
     #endregion
 
-
-
     // Start is called before the first frame update
     public void Start()
     {
         hauntScript = GetComponent<AbilityScript>();
-        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         isFacingRight = true;
@@ -78,7 +75,33 @@ public class BasicMovementScript : NetworkBehaviour
         }
     }
 
-   
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        setAnimControllerServerRpc(OwnerClientId, IsHost && IsOwner);
+
+    }
+
+    [ServerRpc]
+    public void setAnimControllerServerRpc(ulong uid, bool Host)
+    {
+        setAnimControllerClientRpc(uid, Host);
+    }
+
+    [ClientRpc]
+    public void setAnimControllerClientRpc(ulong uid, bool Host)
+    {
+        NetworkObject _player = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(uid);
+        if(Host)
+        {
+            _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHero", typeof(RuntimeAnimatorController ));
+        } else {
+            _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHeroine", typeof(RuntimeAnimatorController ));
+        }
+    }
+
+
+
     //----------------------------------------------------------
     // Movement type methods
     //----------------------------------------------------------
