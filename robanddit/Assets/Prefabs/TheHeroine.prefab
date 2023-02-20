@@ -64,7 +64,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3061201642804786272}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.24, y: -11.82, z: -0.5558}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.399609, y: 1.3649719, z: 0.7627939}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -183,9 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907f4b7d8677b6342b4b23fad5551d53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 17
+  targetMoveSpeed: 17
   accelAmount: 13
   deccelAmount: 16
+  horizontalDir: 0
   jumpForce: 22
   jumpCutGravityMult: 5
   fallGravityMult: 4
@@ -194,13 +195,14 @@ MonoBehaviour:
   maxFloatSpeed: 7
   jumpBuffer: 0.15
   floatGravityMult: 0.5
-  groundCheck: {fileID: 3061201641650041072}
+  jumpDir: 0
   groundCheckSize: {x: 1.2, y: 0.1}
+  groundCheck: {fileID: 3061201641650041072}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  rb: {fileID: 3061201642804786278}
-  MovementEnabled: 0
+  lastOnGroundTime: 0
+  lastJumpTime: 0
 --- !u!95 &3061201642804786275
 Animator:
   serializedVersion: 4
@@ -246,11 +248,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d29ad1548c7ad245b09a795768b71af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hauntSize: {x: 1.5, y: 1.5}
-  hauntDistance: 7
+  originalColour: {r: 0, g: 0, b: 0, a: 0}
+  hauntedColour: {r: 0, g: 0, b: 0, a: 0}
+  hauntCheckSize: {x: 1.5, y: 1.5}
+  hauntDistanceLimit: 100
+  hauntInSpeed: 0.15
+  hauntOutSpeed: 0.15
+  hauntDuration: 1.75
+  inRange: 0
   currentlyHaunting: 0
-  HauntInSpeed: 10
-  HauntOutSpeed: 30
+  inHauntObj: 0
 --- !u!114 &1658639237
 MonoBehaviour:
   m_ObjectHideFlags: 0
