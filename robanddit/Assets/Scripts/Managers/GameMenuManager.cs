@@ -14,6 +14,13 @@ using Cinemachine;
 public class GameMenuManager : MonoBehaviour 
 {
     public static GameMenuManager Instance { get; private set;}
+    [SerializeField] private Button ResumeButton;
+    [SerializeField] private Button SaveButton;
+    [SerializeField] private Button SettingsButton;
+    [SerializeField] private Button MainMenuButton;
+
+
+    public bool menuOn;
 
     IDictionary<string, GameObject> UICanvasChildren = new Dictionary<string, GameObject>();
 
@@ -30,11 +37,33 @@ public class GameMenuManager : MonoBehaviour
         for(int i = 0; i < gameObject.transform.childCount; ++i) {
             UICanvasChildren.Add(gameObject.transform.GetChild(i).gameObject.name, gameObject.transform.GetChild(i).gameObject);
         }
+        menuOn = false;
 
-        setConnectionInfo();
+        UICanvasChildren["OptionsMenu"].transform.Find("TransportInfo").GetComponent<TextMeshProUGUI>().text = "Transport : " + GameState.transport;
+        UICanvasChildren["OptionsMenu"].transform.Find("ProfileInfo").GetComponent<TextMeshProUGUI>().text   = "Profile : " + GameState.profile;
+        UICanvasChildren["OptionsMenu"].transform.Find("ModeInfo").GetComponent<TextMeshProUGUI>().text      = "Mode : " + GameState.mode;
+        UICanvasChildren["OptionsMenu"].transform.Find("JoinInfo").GetComponent<TextMeshProUGUI>().text      = "Join Code : " + GameState.joinCode;
+
+        ResumeButton.onClick.AddListener(()     => toggleMenu());
+//        SaveButton.onClick.AddListener(()       => );
+//        SettingsButton.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
+//        MainMenuButton.onClick.AddListener(()   => StartCoroutine(loadScene("Scene4")));
 
 
+
+
+        setScreen("");
+        
     }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            toggleMenu();
+        }
+    }
+
 
     //----------------------------------------------------------
     // 
@@ -49,14 +78,17 @@ public class GameMenuManager : MonoBehaviour
         if(key != "") UICanvasChildren[key].SetActive(true);
     }
 
-    public void setConnectionInfo() {
+    public void toggleMenu() {
+        if(!menuOn) { 
+            setScreen("OptionsMenu");
+            menuOn = true;
+        } else
+        {
+            setScreen("");
+            menuOn = false;
 
-        setScreen("ConnectionInfo");
-       
-        UICanvasChildren["ConnectionInfo"].transform.Find("code").GetComponent<TextMeshProUGUI>().text      = GameState.joinCode;
-        UICanvasChildren["ConnectionInfo"].transform.Find("mode").GetComponent<TextMeshProUGUI>().text      = GameState.mode;
-        UICanvasChildren["ConnectionInfo"].transform.Find("transport").GetComponent<TextMeshProUGUI>().text = GameState.transport;
-        UICanvasChildren["ConnectionInfo"].transform.Find("profile").GetComponent<TextMeshProUGUI>().text   = GameState.profile;
+        }
+            
                 
     }
 
