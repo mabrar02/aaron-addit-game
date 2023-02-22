@@ -19,7 +19,7 @@ public class GameMenuManager : MonoBehaviour
     [SerializeField] private Button SettingsButton;
     [SerializeField] private Button MainMenuButton;
 
-
+    public float menuSpeed = 0.01f;
     public bool menuOn;
 
     IDictionary<string, GameObject> UICanvasChildren = new Dictionary<string, GameObject>();
@@ -44,13 +44,10 @@ public class GameMenuManager : MonoBehaviour
         UICanvasChildren["OptionsMenu"].transform.Find("ModeInfo").GetComponent<TextMeshProUGUI>().text      = "Mode : " + GameState.mode;
         UICanvasChildren["OptionsMenu"].transform.Find("JoinInfo").GetComponent<TextMeshProUGUI>().text      = "Join Code : " + GameState.joinCode;
 
-        ResumeButton.onClick.AddListener(()     => toggleMenu());
+        ResumeButton.onClick.AddListener(()     => StartCoroutine(toggleMenu()));
 //        SaveButton.onClick.AddListener(()       => );
 //        SettingsButton.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
-//        MainMenuButton.onClick.AddListener(()   => StartCoroutine(loadScene("Scene4")));
-
-
-
+        MainMenuButton.onClick.AddListener(()   => quit());
 
         setScreen("");
         
@@ -60,7 +57,7 @@ public class GameMenuManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            toggleMenu();
+            StartCoroutine(toggleMenu());
         }
     }
 
@@ -78,26 +75,49 @@ public class GameMenuManager : MonoBehaviour
         if(key != "") UICanvasChildren[key].SetActive(true);
     }
 
-    public void toggleMenu() {
+    public IEnumerator toggleMenu() {
+        float scaleVar;
+
         if(!menuOn) { 
             setScreen("OptionsMenu");
-            menuOn = true;
-        } else
-        {
-            setScreen("");
-            menuOn = false;
+            scaleVar = 0f;
+            UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale = new Vector3(0, 0, 1f);
 
+            while (UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale.x <= 1f && 
+                   UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale.y <= 1f )
+            {
+                UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale = new Vector3(scaleVar, scaleVar, 1f);
+                scaleVar += menuSpeed;
+                yield return null;
+            }
+
+            menuOn = true;
+        } else {
+            scaleVar = 1f;
+            UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+
+            while (UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale.x >= 0f && 
+                   UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale.y >= 0f )
+            {
+                UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale = new Vector3(scaleVar, scaleVar, 1f);
+                scaleVar -= menuSpeed;
+                yield return null;
+            }
+
+            setScreen("");
+
+            menuOn = false;
         }
-            
-                
+
+        yield return null;
+
+    }
+
+    public void quit()
+    {
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene("mainMenu");
     }
 
 
-//    private void setSinglePlayer() {
-//       NetworkManager.Singleton.gameObject.SetActive(false);
-//       MultiplayerManager.Instance.gameObject.SetActive(false);
-//       Instance.TheHero = Instantiate(Instance.TheHero, new Vector3(0,0,0), Quaternion.identity);
-//       Instance.CMCam.GetComponent<CinemachineVirtualCamera>().Follow = Instance.TheHero.transform; 
-//       Destroy(Instance.TheHero.GetComponent<NetworkObject>());
-//    }
 }
