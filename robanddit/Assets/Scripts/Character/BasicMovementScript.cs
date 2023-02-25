@@ -59,7 +59,7 @@ public class BasicMovementScript : NetworkBehaviour
 
     // Update is called once per frame
     public void Update() {
-        if (!IsOwner) return;
+        if (!IsOwner || !GameState.controlEnabled) return;
 
         if (!hauntScript.currentlyHaunting) {
             BasicMovement();
@@ -67,7 +67,7 @@ public class BasicMovementScript : NetworkBehaviour
     }
     
     public void FixedUpdate() {
-        if (!IsOwner) return;
+        if (!IsOwner || !GameState.controlEnabled) return;
 
         if (!hauntScript.currentlyHaunting) {
             ApplyForce();

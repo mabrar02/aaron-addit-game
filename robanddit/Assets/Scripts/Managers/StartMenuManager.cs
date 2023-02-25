@@ -35,6 +35,8 @@ public class StartMenuManager : MonoBehaviour
     [SerializeField] private Button joinButton;
     [SerializeField] private TMP_Text loadingText;
 
+    [SerializeField] private Toggle playCutscene;
+
     // Singleton pattern
     void Awake() {
         if(Instance != null && Instance != this) { Destroy(this);}
@@ -57,6 +59,8 @@ public class StartMenuManager : MonoBehaviour
         backButton.onClick.AddListener(()     => setScreen("StartMenu"));
 
         joinButton.onClick.AddListener(()     => StartCoroutine(joinGame()));
+
+
         scene1Button.onClick.AddListener(()   => StartCoroutine(loadScene("startScene")));
         scene2Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene2")));
         scene3Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
@@ -92,6 +96,12 @@ public class StartMenuManager : MonoBehaviour
 
     private IEnumerator loadScene(string sceneName) {
         yield return StartCoroutine(MultiplayerManager.Instance.startHostTop());
+
+        if(playCutscene.isOn)
+        {
+            GameState.playCutscenes = true;
+        }
+
         NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 

@@ -61,7 +61,7 @@ public class AbilityScript : NetworkBehaviour
     }
 
     void Update() {
-        if(!IsOwner) return;
+        if(!IsOwner || !GameState.controlEnabled) return;
 
         anim.SetBool("currentlyHaunting", currentlyHaunting);
         anim.SetBool("inHauntObj", inHauntObj);
