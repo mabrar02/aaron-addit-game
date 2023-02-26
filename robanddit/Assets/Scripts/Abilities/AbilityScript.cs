@@ -61,7 +61,7 @@ public class AbilityScript : NetworkBehaviour
     }
 
     void Update() {
-        if(!IsOwner) return;
+        if(!IsOwner || !GameState.controlEnabled) return;
 
         anim.SetBool("currentlyHaunting", currentlyHaunting);
         anim.SetBool("inHauntObj", inHauntObj);
@@ -75,6 +75,16 @@ public class AbilityScript : NetworkBehaviour
         else if(!currentlyHaunting && inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
             checkHauntOut();
         }
+
+        if(currentlyHaunting && !IsHost)
+        {
+            sprite.color = Color.red;
+        } else if(currentlyHaunting && IsHost) { 
+            sprite.color = Color.blue;
+        } else  {
+            sprite.color = Color.white;
+        }
+
 
     }
 
@@ -104,6 +114,8 @@ public class AbilityScript : NetworkBehaviour
         moveScript.enabled = false;
         col.enabled        = false;
         rb.simulated       = false;
+
+
 
         Vector2 dirToHaunt  = calcDirToHaunt();
         //Debug.DrawRay(transform.position, dirToHaunt);

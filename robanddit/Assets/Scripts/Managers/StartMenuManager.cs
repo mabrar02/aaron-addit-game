@@ -19,7 +19,7 @@ public class StartMenuManager : MonoBehaviour
 
     [SerializeField] private Button hostButton;
     [SerializeField] private Button joinGameButton;
-    [SerializeField] private Button singleplayerButton;
+    [SerializeField] private Button optionsButton;
     [SerializeField] private Button QuitButton;
 
     [SerializeField] private Button scene1Button;
@@ -31,8 +31,11 @@ public class StartMenuManager : MonoBehaviour
     [SerializeField] private Button scene7Button;
     [SerializeField] private Button scene8Button;
 
+    [SerializeField] private Button backButton;
     [SerializeField] private Button joinButton;
     [SerializeField] private TMP_Text loadingText;
+
+    [SerializeField] private Toggle playCutscene;
 
     // Singleton pattern
     void Awake() {
@@ -48,22 +51,25 @@ public class StartMenuManager : MonoBehaviour
             UICanvasChildren.Add(gameObject.transform.GetChild(i).gameObject.name, gameObject.transform.GetChild(i).gameObject);
         }
 
-        hostButton.onClick.AddListener(() => StartCoroutine(hostGame()));
+        hostButton.onClick.AddListener(()     => setScreen("SceneMenu"));
         joinGameButton.onClick.AddListener(() => setScreen("JoinMenu"));
-        singleplayerButton.onClick.AddListener(() => setScreen("SceneMenu"));
-        QuitButton.onClick.AddListener(() => Application.Quit());
+        optionsButton.onClick.AddListener(()  => setScreen("OptionsMenu"));
+        QuitButton.onClick.AddListener(()     => Application.Quit());
 
-        joinButton.onClick.AddListener(() => StartCoroutine(joinGame()));
+        backButton.onClick.AddListener(()     => setScreen("StartMenu"));
 
-        scene1Button.onClick.AddListener(() => loadScene("startScene"));
-        scene2Button.onClick.AddListener(() => loadScene("Scene2"));
-        scene3Button.onClick.AddListener(() => loadScene("Scene3"));
-        scene4Button.onClick.AddListener(() => loadScene("Scene4"));
-        scene5Button.onClick.AddListener(() => loadScene("Scene5"));
-        scene6Button.onClick.AddListener(() => loadScene("Scene6"));
-        scene7Button.onClick.AddListener(() => loadScene("Scene7"));
-        scene8Button.onClick.AddListener(() => loadScene("Scene8"));
+        joinButton.onClick.AddListener(()     => StartCoroutine(joinGame()));
 
+
+        scene1Button.onClick.AddListener(()   => StartCoroutine(loadScene("startScene")));
+        scene2Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene2")));
+        scene3Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
+        scene4Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene4")));
+        scene5Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene5")));
+        scene6Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene6")));
+        scene7Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene7")));
+        scene8Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene8")));
+        
         setScreen("StartMenu");
     }
 
@@ -77,18 +83,28 @@ public class StartMenuManager : MonoBehaviour
             x.Value.SetActive(false);
         }
 
-        if(key != "") UICanvasChildren[key].SetActive(true);
+        if (key != "")
+        {
+        UICanvasChildren[key].SetActive(true);
+        if(key != "StartMenu")
+            {
+                UICanvasChildren["CommonButtons"].SetActive(true);
+            }
+        }
+
     }
 
-    private void loadScene(string sceneName) {
+    private IEnumerator loadScene(string sceneName) {
+        yield return StartCoroutine(MultiplayerManager.Instance.startHostTop());
+
+        if(playCutscene.isOn)
+        {
+            GameState.playCutscenes = true;
+        }
+
         NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
-
-     private IEnumerator hostGame() {
-        yield return StartCoroutine(MultiplayerManager.Instance.startHostTop());
-        setScreen("SceneMenu");
-    }
 
     private IEnumerator joinGame() {
 
@@ -98,13 +114,6 @@ public class StartMenuManager : MonoBehaviour
         yield return StartCoroutine(MultiplayerManager.Instance.startClientTop());   
 
     }
-
-//    public void setSinglePlayer() {
-//        GameState.singleplayer = true;
-//        GameState.host         = false;
-//        SceneManager.LoadScene("startScene");
-//    }
-
 
 
 }

@@ -6,12 +6,11 @@ public class PlayerDeath : MonoBehaviour
 {
 
     private Rigidbody2D rb;
-    private SpriteRenderer sr;
+    public SpriteRenderer sr;
     public Transform respawnPoint;
 
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
