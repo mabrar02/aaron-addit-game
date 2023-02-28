@@ -76,14 +76,14 @@ public class AbilityScript : NetworkBehaviour
             checkHauntOut();
         }
 
-        if(currentlyHaunting && !IsHost)
-        {
-            sprite.color = Color.red;
-        } else if(currentlyHaunting && IsHost) { 
-            sprite.color = Color.blue;
-        } else  {
-            sprite.color = Color.white;
-        }
+//        if(currentlyHaunting && !IsHost)
+//        {
+//            sprite.color = Color.red;
+//        } else if(currentlyHaunting && IsHost) { 
+//            sprite.color = Color.blue;
+//        } else  {
+//            sprite.color = Color.white;
+//        }
 
 
     }
