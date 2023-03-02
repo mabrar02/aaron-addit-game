@@ -29,7 +29,7 @@ public class SetupHandler : NetworkBehaviour
         {
             enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
 
-            cam.Follow = _player.transform.GetChild(0).transform;
+            cam.Follow = _player.transform.GetChild(0).transform.GetChild(4).transform;
 
             GameState.controlEnabled = true;
         }
@@ -52,7 +52,7 @@ public class SetupHandler : NetworkBehaviour
         _player.transform.GetChild(0).transform.rotation = new Quaternion(0, 0, 0, 0);
 
         enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
-        cam.Follow = _player.transform.GetChild(0).transform;
+        cam.Follow = _player.transform.GetChild(0).transform.GetChild(4).transform;
 
         GameState.controlEnabled = true;
     }
