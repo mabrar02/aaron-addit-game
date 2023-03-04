@@ -57,7 +57,7 @@ public class AbilityScript : NetworkBehaviour
         currentlyHaunting = false;
         inHauntObj        = false;
 
-        arrow = transform.Find("arrow").gameObject;
+        arrow = transform.GetChild(1).gameObject;
     }
 
     void Update() {

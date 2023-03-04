@@ -4,22 +4,23 @@ using UnityEngine;
 
 public class ArrowScript : MonoBehaviour
 {
-
-    void OnEnable() {
-        transform.localScale = new Vector3(-0.5f, 0.5f, 1);
+    public float radius;
+    private void Start()
+    {
+        transform.GetChild(0).transform.localPosition = new Vector3(0, -radius, 0); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 objectPos = transform.position;
 
         mousePos.x = mousePos.x - objectPos.x;
         mousePos.y = mousePos.y - objectPos.y;
 
         float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 90));
 
     }
 }
