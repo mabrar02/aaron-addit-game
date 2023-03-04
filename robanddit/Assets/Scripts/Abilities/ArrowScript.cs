@@ -7,7 +7,7 @@ public class ArrowScript : MonoBehaviour
     public float radius;
     private void Start()
     {
-        transform.GetChild(0).transform.localPosition = new Vector3(0, -radius, 0); 
+        transform.GetChild(0).transform.localPosition = new Vector3(0, -radius, -1); 
     }
 
     // Update is called once per frame
