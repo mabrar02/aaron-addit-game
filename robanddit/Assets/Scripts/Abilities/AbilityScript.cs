@@ -76,16 +76,6 @@ public class AbilityScript : NetworkBehaviour
             checkHauntOut();
         }
 
-//        if(currentlyHaunting && !IsHost)
-//        {
-//            sprite.color = Color.red;
-//        } else if(currentlyHaunting && IsHost) { 
-//            sprite.color = Color.blue;
-//        } else  {
-//            sprite.color = Color.white;
-//        }
-
-
     }
 
 
@@ -129,7 +119,7 @@ public class AbilityScript : NetworkBehaviour
             distToHaunt = calcDistToHaunt();
 
             float angle = Mathf.Atan2(dirToHaunt.y, dirToHaunt.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.GetChild(2).transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             transform.position = new Vector3(transform.position.x + dirToHaunt.x * hauntInSpeed, transform.position.y + dirToHaunt.y * hauntInSpeed, 0);
             yield return null;
         }
@@ -137,14 +127,13 @@ public class AbilityScript : NetworkBehaviour
         sprite.enabled = false;
 
         transform.position = HauntObject.transform.position;
-        transform.rotation = Quaternion.identity;
+        transform.GetChild(2).transform.rotation = Quaternion.identity;
 
         arrow.SetActive(true);
 
         inHauntObj = true;
         currentlyHaunting = false;
 
-//        hauntedObject.GetComponent<SpriteRenderer>().color = hauntedColour; // To be replaced
         if(hauntedObject.GetComponent<HauntMovementScript>()) {
 
             ob_ref = new NetworkObjectReference(hauntedObject);
@@ -252,7 +241,7 @@ public class AbilityScript : NetworkBehaviour
                 hauntDurationCount -= 0.01f;
 
                 float angle = Mathf.Atan2(dirToMouse.y, dirToMouse.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.GetChild(2).transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 transform.position = new Vector3(transform.position.x + dirToMouse.x * hauntOutSpeed, transform.position.y + dirToMouse.y * hauntOutSpeed, 0);
             }
             else {
@@ -261,6 +250,7 @@ public class AbilityScript : NetworkBehaviour
                 col.enabled = true;
 
                 moveScript.enabled = true;
+                transform.GetChild(2).transform.rotation = Quaternion.identity;
 
                 rb.simulated = true;
                 rb.velocity  = new Vector2(transform.position.x + dirToMouse.x, transform.position.y + dirToMouse.y);
@@ -269,11 +259,11 @@ public class AbilityScript : NetworkBehaviour
 
                 if (dirToMouse.x >= 0) {
                     moveScript.isFacingRight = true;
-                    transform.rotation = Quaternion.identity;
+                    transform.GetChild(2).transform.rotation = Quaternion.identity;
                 }
                 else {
                     moveScript.isFacingRight = false;
-                    transform.rotation = Quaternion.AngleAxis(180, Vector3.up);;
+                    transform.GetChild(2).transform.rotation = Quaternion.AngleAxis(180, Vector3.up);;
                 }
             }
             

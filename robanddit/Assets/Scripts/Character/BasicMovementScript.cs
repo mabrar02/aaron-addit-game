@@ -225,7 +225,7 @@ public class BasicMovementScript : NetworkBehaviour
     //----------------------------------------------------------
     public void orientCharacter(bool isMovingRight) {
         if(isMovingRight != isFacingRight) {
-            transform.Rotate(0f, 180f, 0f);
+            transform.GetChild(2).transform.Rotate(0f, 180f, 0f);
             isFacingRight = !isFacingRight;
         }
     }
