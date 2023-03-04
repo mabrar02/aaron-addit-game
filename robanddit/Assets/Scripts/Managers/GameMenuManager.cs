@@ -49,7 +49,6 @@ public class GameMenuManager : MonoBehaviour
 //        SettingsButton.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
         MainMenuButton.onClick.AddListener(()   => quit());
 
-        setScreen("");
         
     }
 
@@ -66,20 +65,12 @@ public class GameMenuManager : MonoBehaviour
     // 
     //----------------------------------------------------------
 
-    private void setScreen(string key = "") {
-
-        foreach(var x in UICanvasChildren) {
-            x.Value.SetActive(false);
-        }
-
-        if(key != "") UICanvasChildren[key].SetActive(true);
-    }
 
     public IEnumerator toggleMenu() {
         float scaleVar;
 
         if(!menuOn) { 
-            setScreen("OptionsMenu");
+            UICanvasChildren["OptionsMenu"].SetActive(true);
             scaleVar = 0f;
             UICanvasChildren["OptionsMenu"].GetComponent<RectTransform>().localScale = new Vector3(0, 0, 1f);
 
@@ -104,7 +95,7 @@ public class GameMenuManager : MonoBehaviour
                 yield return null;
             }
 
-            setScreen("");
+            UICanvasChildren["OptionsMenu"].SetActive(false);
 
             menuOn = false;
         }
