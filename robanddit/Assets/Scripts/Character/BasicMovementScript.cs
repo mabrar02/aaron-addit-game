@@ -33,7 +33,6 @@ public class BasicMovementScript : NetworkBehaviour
     public  Animator anim;
     private Collider2D col;
     private AbilityScript hauntScript;
-    
 
     //States
     public bool isFacingRight {get; set;}
@@ -53,6 +52,7 @@ public class BasicMovementScript : NetworkBehaviour
         hauntScript = GetComponent<AbilityScript>();
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
         isFacingRight = true;
         gravityScale = rb.gravityScale;
     }
@@ -95,8 +95,10 @@ public class BasicMovementScript : NetworkBehaviour
         if(Host)
         {
             _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHero", typeof(RuntimeAnimatorController ));
+            _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().material = (Material)Resources.Load("Materials/RobbyGlow", typeof(Material));
         } else {
             _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHeroine", typeof(RuntimeAnimatorController ));
+            _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().material = (Material)Resources.Load("Materials/ClaireGlow", typeof(Material));
         }
     }
 
