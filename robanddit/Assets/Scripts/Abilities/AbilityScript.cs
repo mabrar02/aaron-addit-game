@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.U2D;
 
 // TODO List:
 //  - Somehow stop haunt progression from phasing through objects
@@ -43,6 +44,10 @@ public class AbilityScript : NetworkBehaviour
     private BasicMovementScript moveScript;
     public NetworkObjectReference ob_ref;
 
+    public Material storedMat;
+    public Material storedHauntMat;
+    public Collider2D storedHauntCollider;
+    public Material glowMaterial;
     #endregion
    
     // Start is called before the first frame update
@@ -60,6 +65,7 @@ public class AbilityScript : NetworkBehaviour
         arrow = transform.GetChild(1).gameObject;
     }
 
+
     void Update() {
         if(!IsOwner || !GameState.controlEnabled) return;
 
@@ -76,6 +82,23 @@ public class AbilityScript : NetworkBehaviour
             checkHauntOut();
         }
 
+        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
+
+        if (hauntCollider && hauntCollider.CompareTag("Hauntable") && inRange)
+        {
+            storedHauntCollider = hauntCollider;
+            if(storedMat == null) storedMat = storedHauntCollider.gameObject.GetComponent<SpriteRenderer>().material;
+
+            hauntCollider.gameObject.GetComponent<SpriteRenderer>().material = glowMaterial; 
+
+        } else if(storedHauntCollider) {
+            if(storedHauntCollider.gameObject != hauntedObject) storedHauntCollider.gameObject.GetComponent<SpriteRenderer>().material = storedMat;
+
+            storedMat = null;
+            storedHauntCollider = null;
+        }
+
+
     }
 
 
@@ -84,12 +107,10 @@ public class AbilityScript : NetworkBehaviour
     // Starts the coroutine PerformHauntIn to begin haunt
     //----------------------------------------------------------
     private void checkHauntIn() {
-        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
 
         if (hauntCollider && hauntCollider.CompareTag("Hauntable")) {
+            storedHauntMat = storedMat;
             hauntedObject = hauntCollider.gameObject;
-            originalColour = hauntedObject.GetComponent<SpriteRenderer>().color;
-
             StartCoroutine(PerformHauntIn(hauntedObject));
         }
     }
@@ -178,10 +199,13 @@ public class AbilityScript : NetworkBehaviour
         switch(entry)
         {
             case "In" :
+                if(!IsOwner) storedHauntMat = net_ob.GetComponent<SpriteRenderer>().material;
+                net_ob.GetComponent<SpriteRenderer>().material = glowMaterial;
                 sprite.enabled = false;
                 net_ob.tag = "Haunted";
                 break;
             case "Out":
+                if(!IsOwner) net_ob.GetComponent<SpriteRenderer>().material = storedHauntMat;
                 sprite.enabled = true;
                 net_ob.tag = "Hauntable";
                 break;
@@ -193,15 +217,17 @@ public class AbilityScript : NetworkBehaviour
     //----------------------------------------------------------
     private void checkHauntOut() {
 
-//        hauntedObject.GetComponent<SpriteRenderer>().color = Color.white; // To be replaced
-
-        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
+        //        hauntedObject.GetComponent<SpriteRenderer>().color = Color.white; // To be replaced
+        //hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
 
         if(hauntCollider && hauntCollider.CompareTag("Haunted")) return ;
 
         changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "Out");
 
         if(hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
+            hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;
+
+            storedHauntMat = storedMat;
 
             if(hauntedObject.GetComponent<HauntMovementScript>()) {
                 hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
@@ -221,6 +247,7 @@ public class AbilityScript : NetworkBehaviour
     // PerformHauntOut : 
     //----------------------------------------------------------
     private IEnumerator PerformHauntOut() {
+
         inHauntObj        = false;
         currentlyHaunting = true;
 
@@ -232,6 +259,9 @@ public class AbilityScript : NetworkBehaviour
             hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
             hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
         }
+
+        hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;
+        hauntedObject = null;
 
         hauntDurationCount = hauntDuration;
 
