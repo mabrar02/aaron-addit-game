@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e44f245be06724d4cba8762664d4b487
+guid: 48fff7a6e993df046b8f05efdaa550f7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -117,7 +117,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RobbySprites_0
+      name: ClaireSprites_0
       rect:
         serializedVersion: 2
         x: 37
@@ -131,14 +131,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cf31601566d5dcd40ac2970d25eca2d2
-      internalID: 332323912
+      spriteID: f4791b14f95cb914ba28765e008a9251
+      internalID: 839516571
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_1
+      name: ClaireSprites_1
       rect:
         serializedVersion: 2
         x: 258
@@ -152,14 +152,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6add04f50ac7af4f8ae1343fe8b34fe
-      internalID: 47538637
+      spriteID: 03be3b814945964489bec888f32c4854
+      internalID: -666673757
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_2
+      name: ClaireSprites_2
       rect:
         serializedVersion: 2
         x: 487
@@ -173,14 +173,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b72a09f162f1b694abefdf009cf176e0
-      internalID: 1805153978
+      spriteID: c3f66cd1262958142bc33b08a7dc8d58
+      internalID: 646476462
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_3
+      name: ClaireSprites_3
       rect:
         serializedVersion: 2
         x: 716
@@ -194,14 +194,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 875c5b9f8994dc645808ff7eb98782f4
-      internalID: -1801932966
+      spriteID: 708f563bc6936794f983b44293628dda
+      internalID: 1481243261
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_4
+      name: ClaireSprites_4
       rect:
         serializedVersion: 2
         x: 936
@@ -215,14 +215,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 03a338f421dbe8942883e55371e9250b
-      internalID: 579942415
+      spriteID: d93ec595c9f9943488ba32ad7020cd20
+      internalID: 423652114
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_5
+      name: ClaireSprites_5
       rect:
         serializedVersion: 2
         x: 1165
@@ -236,14 +236,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fc5238b84e96d1b45909f5cb69a5874c
-      internalID: 1276359744
+      spriteID: 29b26b94bf0aef647ae9b51e73f35c4c
+      internalID: 2126093061
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_6
+      name: ClaireSprites_6
       rect:
         serializedVersion: 2
         x: 37
@@ -257,14 +257,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f4583994d3c2304498b6019cd9cd6761
-      internalID: 1557784190
+      spriteID: 9815895702611fd42aaf5c8d1caa1f93
+      internalID: 2112294038
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_7
+      name: ClaireSprites_7
       rect:
         serializedVersion: 2
         x: 267
@@ -278,14 +278,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d8be41c22aceb674db522dac0ea8edcc
-      internalID: 1789654506
+      spriteID: 1c1709f73d66c5e44a4db9f42f238a89
+      internalID: -1436361528
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_8
+      name: ClaireSprites_8
       rect:
         serializedVersion: 2
         x: 497
@@ -299,14 +299,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 46d4bc6e2b72030428648127ca5114db
-      internalID: 946353744
+      spriteID: 8560bdd9056c1514d90c3c6a4d7aeed4
+      internalID: 2138569413
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_9
+      name: ClaireSprites_9
       rect:
         serializedVersion: 2
         x: 727
@@ -320,17 +320,17 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: edbe6bea912609441b132a570c69301e
-      internalID: -1910060614
+      spriteID: d2cbe6399135fed44980ee122e25545c
+      internalID: 1494456534
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_10
+      name: ClaireSprites_10
       rect:
         serializedVersion: 2
-        x: 28
+        x: 26
         y: 910
         width: 196
         height: 232
@@ -341,14 +341,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 13f039fd677b56b42ac61e0accc3e491
-      internalID: -1444976379
+      spriteID: b0791b895eadf61489b324fa10f6114f
+      internalID: 222456627
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_11
+      name: ClaireSprites_11
       rect:
         serializedVersion: 2
         x: 246
@@ -362,18 +362,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0b0c1956844162949a676de86662b27f
-      internalID: -1667098917
+      spriteID: b68f2962d59308c4ab2ae8fdba19578d
+      internalID: -789159077
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_12
+      name: ClaireSprites_12
       rect:
         serializedVersion: 2
         x: 476
-        y: 908
+        y: 910
         width: 196
         height: 232
       alignment: 0
@@ -383,14 +383,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5c134e4425ffbbe4590d9e83e453af3b
-      internalID: 734276212
+      spriteID: 0ce29ae9a254ac6448747f8c78927199
+      internalID: 1517311145
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_13
+      name: ClaireSprites_13
       rect:
         serializedVersion: 2
         x: 716
@@ -404,19 +404,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d845cc669bac9ed469861dae006b1395
-      internalID: 431171214
+      spriteID: 81cc059ef6fabf7428fb44eb2d60b978
+      internalID: -77385977
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_14
+      name: ClaireSprites_14
       rect:
         serializedVersion: 2
         x: 6
         y: 645
-        width: 215
+        width: 219
         height: 219
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -425,19 +425,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 22b9d6eadd8f73640a1d68d2801706d6
-      internalID: -1174073897
+      spriteID: aace100302c39f847aafea42c888f32d
+      internalID: -213474283
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_15
+      name: ClaireSprites_15
       rect:
         serializedVersion: 2
         x: 258
         y: 652
-        width: 213
+        width: 217
         height: 212
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -446,19 +446,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 70c282a52572f254aaffdd986719025c
-      internalID: 749629093
+      spriteID: 45aceb9c5d5287946aaef640426b01ce
+      internalID: 1587056539
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_16
+      name: ClaireSprites_16
       rect:
         serializedVersion: 2
         x: 508
         y: 644
-        width: 213
+        width: 217
         height: 220
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -467,19 +467,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e5aa671131d1fcf4196fb38dd0645d75
-      internalID: -951991859
+      spriteID: e288662da0814a448a4feb5c13280a6b
+      internalID: 2039303429
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_17
+      name: ClaireSprites_17
       rect:
         serializedVersion: 2
         x: 758
         y: 645
-        width: 213
+        width: 217
         height: 219
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -488,19 +488,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ff588708584e0547be8b50e528eb3c9
-      internalID: -2024673618
+      spriteID: c25b1f9597a4aee4d9b85711b7670db7
+      internalID: -601361257
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_18
+      name: ClaireSprites_18
       rect:
         serializedVersion: 2
         x: 1006
-        y: 646
-        width: 215
+        y: 648
+        width: 219
         height: 218
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -509,19 +509,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 96484f649e9a6fe4d9f11b7f3798517c
-      internalID: -1636210002
+      spriteID: 4caa1bb4c83b1a84e94ac25fa82c8fe0
+      internalID: -928948924
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_19
+      name: ClaireSprites_19
       rect:
         serializedVersion: 2
         x: 1256
         y: 645
-        width: 216
+        width: 219
         height: 219
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -530,14 +530,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4a1d7d357c53eb34e95b1d70baa89b65
-      internalID: -888851330
+      spriteID: 2e729d85e18121f4e8f82a3daaee0dd8
+      internalID: 498419576
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_20
+      name: ClaireSprites_20
       rect:
         serializedVersion: 2
         x: 58
@@ -551,20 +551,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6d632f3084d87e04ea4eac1063d8900f
-      internalID: -1500188858
+      spriteID: a392095a98e26724baa753576826e970
+      internalID: 44446082
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_21
+      name: ClaireSprites_25
       rect:
         serializedVersion: 2
-        x: 743
-        y: 374
-        width: 641
-        height: 220
+        x: 742
+        y: 373
+        width: 642
+        height: 221
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -572,20 +572,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b1dad5231c23e1c408e50d3309f42fe6
-      internalID: 291549946
+      spriteID: 7d8ba1ed915bb704f9d30727c25e5951
+      internalID: 1107851773
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_22
+      name: ClaireSprites_22
       rect:
         serializedVersion: 2
-        x: 36
-        y: 88
+        x: 37
+        y: 89
         width: 600
-        height: 218
+        height: 221
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -593,20 +593,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9693eb4404028e44b8af8d9f27ce1dad
-      internalID: 1099778720
+      spriteID: ed2270a5bb19461479f7e177e5b439eb
+      internalID: -166099928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RobbySprites_23
+      name: ClaireSprites_23
       rect:
         serializedVersion: 2
         x: 746
-        y: 102
+        y: 101
         width: 649
-        height: 193
+        height: 194
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -614,8 +614,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ea6701d8e57536c419f9dbebdebec600
-      internalID: -430673470
+      spriteID: 5f84ceaacb3796847aaadfe7d130a2c8
+      internalID: -73790613
       vertices: []
       indices: 
       edges: []
@@ -630,39 +630,40 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures:
-    - texture: {fileID: 2800000, guid: 0236d6028d475a947ab39098b603af1c, type: 3}
+    - texture: {fileID: 2800000, guid: 681d0a72929b16743a79b244ec99a0ca, type: 3}
       name: _Emission
     nameFileIdTable:
-      RobbySprites_9: -1910060614
-      RobbySprites_26: 357635203
-      RobbySprites_18: -1636210002
-      RobbySprites_11: -1667098917
-      RobbySprites_8: 946353744
-      RobbySprites_4: 579942415
-      RobbySprites_5: 1276359744
-      RobbySprites_7: 1789654506
-      RobbySprites_0: 332323912
-      RobbySprites_1: 47538637
-      RobbySprites_3: -1801932966
-      RobbySprites_12: 734276212
-      RobbySprites_6: 1557784190
-      RobbySprites_10: -1444976379
-      RobbySprites_32: -183119165
-      RobbySprites_14: -1174073897
-      RobbySprites_20: -1500188858
-      RobbySprites_23: -430673470
-      RobbySprites_13: 431171214
-      RobbySprites_24: 255878885
-      RobbySprites_16: -951991859
-      RobbySprites_21: 291549946
-      RobbySprites_28: 660537992
-      RobbySprites_30: -2026425497
-      RobbySprites_2: 1805153978
-      RobbySprites_19: -888851330
-      RobbySprites_22: 1099778720
-      RobbySprites_15: 749629093
-      RobbySprites_17: -2024673618
-      RobbySprites_27: -1113374953
+      ClaireSprites_17: -601361257
+      ClaireSprites_27: -237962072
+      ClaireSprites_12: 1517311145
+      ClaireSprites_22: -166099928
+      ClaireSprites_7: -1436361528
+      ClaireSprites_1: -666673757
+      ClaireSprites_32: -676838041
+      ClaireSprites_16: 2039303429
+      ClaireSprites_10: 222456627
+      ClaireSprites_13: -77385977
+      ClaireSprites_14: -213474283
+      ClaireSprites_21: -1340788327
+      ClaireSprites_20: 44446082
+      ClaireSprites_15: 1587056539
+      ClaireSprites_30: 1050687170
+      ClaireSprites_28: 1104890721
+      ClaireSprites_3: 1481243261
+      ClaireSprites_23: -73790613
+      ClaireSprites_24: 167640198
+      ClaireSprites_0: 839516571
+      ClaireSprites_19: 498419576
+      ClaireSprites_5: 2126093061
+      ClaireSprites_4: 423652114
+      ClaireSprites_2: 646476462
+      ClaireSprites_9: 1494456534
+      ClaireSprites_25: 1107851773
+      ClaireSprites_6: 2112294038
+      ClaireSprites_8: 2138569413
+      ClaireSprites_26: -1714131020
+      ClaireSprites_11: -789159077
+      ClaireSprites_18: -928948924
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

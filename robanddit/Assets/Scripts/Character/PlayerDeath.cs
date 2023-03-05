@@ -17,8 +17,7 @@ public class PlayerDeath : MonoBehaviour
         if (collision.gameObject.CompareTag("Hazard")) {
             rb.simulated = false;
             sr.enabled = false;
-            gameObject.GetComponent<AbilityScript>().enabled = false;
-            gameObject.GetComponent<BasicMovementScript>().enabled = false;
+            GameState.controlEnabled = false;
             StartCoroutine(Respawn());
         }
     }
@@ -29,8 +28,7 @@ public class PlayerDeath : MonoBehaviour
 
         rb.simulated = true;
         sr.enabled = true;
+        GameState.controlEnabled = true;
 
-        gameObject.GetComponent<BasicMovementScript>().enabled = true;
-        gameObject.GetComponent<AbilityScript>().enabled = true;
     }
 }

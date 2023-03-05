@@ -33,8 +33,9 @@ public class BasicMovementScript : NetworkBehaviour
     public  Animator anim;
     private Collider2D col;
     private AbilityScript hauntScript;
-    
 
+
+    public NetworkObjectReference ob_ref;
     //States
     public bool isFacingRight {get; set;}
     public bool isJumping     {get; set;}
@@ -53,6 +54,7 @@ public class BasicMovementScript : NetworkBehaviour
         hauntScript = GetComponent<AbilityScript>();
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
         isFacingRight = true;
         gravityScale = rb.gravityScale;
     }
@@ -78,25 +80,30 @@ public class BasicMovementScript : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        setAnimControllerServerRpc(OwnerClientId, IsHost && IsOwner);
-
+        ob_ref = new NetworkObjectReference(NetworkObject);
+        setAnimControllerServerRpc(ob_ref);
     }
 
-    [ServerRpc]
-    public void setAnimControllerServerRpc(ulong uid, bool Host)
+    [ServerRpc(RequireOwnership =false)]
+    public void setAnimControllerServerRpc(NetworkObjectReference ob_ref)
     {
-        setAnimControllerClientRpc(uid, Host);
+        setAnimControllerClientRpc(ob_ref, IsOwner);
     }
 
     [ClientRpc]
-    public void setAnimControllerClientRpc(ulong uid, bool Host)
+    public void setAnimControllerClientRpc(NetworkObjectReference ob_ref, bool Host)
     {
-        NetworkObject _player = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(uid);
+        NetworkObject _player;
+        ob_ref.TryGet(out _player);
         if(Host)
         {
             _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHero", typeof(RuntimeAnimatorController ));
+            _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().material = (Material)Resources.Load("Materials/RobbyGlow", typeof(Material));
+            _player.transform.GetChild(0).GetComponent<AbilityScript>().glowMaterial = (Material)Resources.Load("Materials/RobbyGlow", typeof(Material));
         } else {
             _player.transform.GetChild(0).GetComponent<BasicMovementScript>().anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Animations/TheHeroine", typeof(RuntimeAnimatorController ));
+            _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().material = (Material)Resources.Load("Materials/ClaireGlow", typeof(Material));
+            _player.transform.GetChild(0).GetComponent<AbilityScript>().glowMaterial = (Material)Resources.Load("Materials/ClaireGlow", typeof(Material));
         }
     }
 
