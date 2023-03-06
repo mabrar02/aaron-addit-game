@@ -100,9 +100,21 @@ public class StartMenuManager : MonoBehaviour
         if(playCutscene.isOn)
         {
             GameState.playCutscenes = true;
+            yield return StartCoroutine(transition());
         }
 
         NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+    }
+
+    private IEnumerator transition() {
+        UICanvasChildren["BlackScreen"].SetActive(true);
+        var a = UICanvasChildren["BlackScreen"].GetComponent<Image>().color;
+        while(a.a < 1) {
+            a.a += 0.001f;
+            UICanvasChildren["BlackScreen"].GetComponent<Image>().color = a;
+            yield return null;
+        }
+        yield return null;
     }
 
 
