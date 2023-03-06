@@ -4,37 +4,53 @@ using UnityEngine;
 using Unity.Netcode;
 using System;
 using Cinemachine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Playables;
 using UnityEngine.U2D;
+using UnityEngine.Rendering.Universal;
 
 public class SetupHandler : NetworkBehaviour
 {
     public CinemachineVirtualCamera cam; 
     public NetworkObject _player;
+    public GameObject blackScreen;
     private PlayableDirector _playableDirector;
     private IReadOnlyList<ulong> clientIds;
 
+
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        _player.transform.GetChild(0).transform.Find("Light").gameObject.SetActive(true);
 
-        if(GameState.playCutscenes == true)
-        {
-            NetworkManager.Singleton.SceneManager.LoadScene("Cutscene1", LoadSceneMode.Additive);
-
+        if(GameState.playCutscenes == true) {
             GameState.sceneStartCalled += sceneStart;
-        } else
-        {
+            yield return StartCoroutine(transition());
+
+        } else {
+
+            blackScreen.SetActive(false);
             enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
-
-            cam.Follow = _player.transform.GetChild(0).transform.GetChild(4).transform;
-
+            cam.Follow = _player.transform.GetChild(0).transform.Find("Cam").transform;
             GameState.controlEnabled = true;
         }
 
     }
+
+    private IEnumerator transition() {
+        NetworkManager.Singleton.SceneManager.LoadScene("Cutscene1", LoadSceneMode.Additive);
+        var a = blackScreen.GetComponent<Image>().color;
+        while(a.a > 0) {
+            a.a -= 0.0005f;
+            blackScreen.GetComponent<Image>().color = a;
+            yield return null;
+        }
+        blackScreen.SetActive(false);
+        yield return null;
+    }
+
 
     private void sceneStart(object a ,EventArgs e)
     {
@@ -48,11 +64,11 @@ public class SetupHandler : NetworkBehaviour
     {
         NetworkManager.Singleton.SceneManager.UnloadScene(obj.gameObject.scene);
 
-        _player.transform.GetChild(0).transform.position = new Vector3(4, -12.08f, 0);
-        _player.transform.GetChild(0).transform.rotation = new Quaternion(0, 0, 0, 0);
+        _player.transform.GetChild(0).transform.position = GameState.robbyPosition;
+        _player.transform.GetChild(0).transform.rotation = GameState.robbyRotation;
 
         enablePlayerServerRpc(NetworkManager.Singleton.LocalClient.ClientId);
-        cam.Follow = _player.transform.GetChild(0).transform.GetChild(4).transform;
+        cam.Follow = _player.transform.GetChild(0).transform.Find("Cam").transform;
 
         GameState.controlEnabled = true;
     }
@@ -77,7 +93,8 @@ public class SetupHandler : NetworkBehaviour
     {
         xi.TryGet(out _player); 
         _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
-        _player.transform.GetChild(0).transform.GetChild(2).GetComponent<SpriteRenderer>().enabled = true;
+        _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().enabled = true;
+        _player.transform.GetChild(0).transform.Find("Light").gameObject.SetActive(true);
     }
 
 }

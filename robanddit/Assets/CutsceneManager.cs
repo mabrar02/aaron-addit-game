@@ -1,35 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using UnityEngine.Playables;
 using System;
 
-public class Fade : MonoBehaviour
+public class CutsceneManager : MonoBehaviour
 {
     public GameObject colorSlider;
+    public GameObject player;
     public PlayableDirector cutscene;
-
 
     private void Awake()
     {
         GameState.controlEnabled = false; 
         GameState.cutsceneInstance = cutscene; 
         GameState.pingEvent();
-
     }
+
 
 
     // Update is called once per frame
     void Update()
     {
 
-        var newColor = gameObject.GetComponent<SpriteRenderer>().color;
+        GameState.robbyPosition = player.transform.position;
+        GameState.robbyRotation = player.transform.rotation;
+
+        var newColor = player.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
 
         newColor.a = colorSlider.transform.position.x;
 
-        gameObject.GetComponent<SpriteRenderer>().color = newColor;
+        player.transform.GetChild(0).GetComponent<SpriteRenderer>().color = newColor;
 
     }
+
 }
