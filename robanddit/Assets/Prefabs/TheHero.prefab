@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 7665297780850914923}
   - component: {fileID: 2882579922956331438}
   m_Layer: 0
-  m_Name: Light 2D
+  m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7665297780850914923
 Transform:
   m_ObjectHideFlags: 0
@@ -304,6 +304,10 @@ MonoBehaviour:
   inRange: 0
   currentlyHaunting: 0
   inHauntObj: 0
+  storedMat: {fileID: 0}
+  storedHauntMat: {fileID: 0}
+  storedHauntCollider: {fileID: 0}
+  glowMaterial: {fileID: 0}
 --- !u!114 &-7995154921591745627
 MonoBehaviour:
   m_ObjectHideFlags: 0

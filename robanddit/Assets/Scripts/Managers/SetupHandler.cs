@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Playables;
 using UnityEngine.U2D;
+using UnityEngine.Rendering.Universal;
 
 public class SetupHandler : NetworkBehaviour
 {
@@ -22,6 +23,7 @@ public class SetupHandler : NetworkBehaviour
     IEnumerator Start()
     {
         _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        _player.transform.GetChild(0).transform.Find("Light").gameObject.SetActive(true);
 
         if(GameState.playCutscenes == true) {
             GameState.sceneStartCalled += sceneStart;
@@ -92,6 +94,7 @@ public class SetupHandler : NetworkBehaviour
         xi.TryGet(out _player); 
         _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
         _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().enabled = true;
+        _player.transform.GetChild(0).transform.Find("Light").gameObject.SetActive(true);
     }
 
 }

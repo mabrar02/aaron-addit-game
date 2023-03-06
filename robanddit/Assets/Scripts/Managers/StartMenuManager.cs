@@ -86,11 +86,13 @@ public class StartMenuManager : MonoBehaviour
         if (key != "")
         {
         UICanvasChildren[key].SetActive(true);
+
         if(key != "StartMenu")
             {
                 UICanvasChildren["CommonButtons"].SetActive(true);
             }
         }
+        UICanvasChildren["Header"].SetActive(true);
 
     }
 
