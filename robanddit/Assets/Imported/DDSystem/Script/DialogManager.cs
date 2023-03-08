@@ -148,7 +148,7 @@ namespace Doublsb.Dialog
             if (_current_Character != null)
             {
                 SEAudio.clip = _current_Character.ChatSE[UnityEngine.Random.Range(0, _current_Character.ChatSE.Length)];
-                SEAudio.Play();
+                if(!SEAudio.isPlaying) SEAudio.Play();
             }
         }
 
@@ -341,6 +341,14 @@ namespace Doublsb.Dialog
             }
 
             _current_Data.PrintText += _current_Data.Format.CloseTagger;
+
+            if (_current_Character != null)
+            {
+                if(SEAudio.isPlaying) SEAudio.Stop();
+            }
+
+
+
         }
 
         public void _emote(string Text)
