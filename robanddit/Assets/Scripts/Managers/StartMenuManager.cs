@@ -37,6 +37,9 @@ public class StartMenuManager : MonoBehaviour
 
     [SerializeField] private Toggle playCutscene;
 
+    public CinemachineVirtualCamera cam; 
+    public NetworkObject _player;
+    private IReadOnlyList<ulong> clientIds;
     // Singleton pattern
     void Awake() {
         if(Instance != null && Instance != this) { Destroy(this);}
@@ -62,7 +65,7 @@ public class StartMenuManager : MonoBehaviour
 
 
         scene1Button.onClick.AddListener(()   => StartCoroutine(loadScene("startScene")));
-        scene2Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene2")));
+        scene2Button.onClick.AddListener(()   => StartCoroutine(loadScene("sandbox")));
         scene3Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene3")));
         scene4Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene4")));
         scene5Button.onClick.AddListener(()   => StartCoroutine(loadScene("Scene5")));
@@ -104,7 +107,15 @@ public class StartMenuManager : MonoBehaviour
             GameState.playCutscenes = true;
             yield return StartCoroutine(transition());
         }
-
+        if (sceneName == "sandbox") {
+            // SANDBOX SCENE
+            _player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+            GameState.controlEnabled = true;
+            _player.transform.GetChild(0).gameObject.GetComponent<Rigidbody2D>().simulated = true;
+            _player.transform.GetChild(0).transform.Find("Sprite").GetComponent<SpriteRenderer>().enabled = true;
+            _player.transform.GetChild(0).transform.Find("Light").gameObject.SetActive(true);
+            // SANDBOX SCENE
+        }
         NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
