@@ -82,7 +82,7 @@ public class AbilityScript : NetworkBehaviour
             checkHauntOut();
         }
 
-        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
+        hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0);
 
         if (hauntCollider && hauntCollider.CompareTag("Hauntable") && inRange)
         {
@@ -163,6 +163,11 @@ public class AbilityScript : NetworkBehaviour
             hauntedObject.GetComponent<HauntMovementScript>().enabled = true;
             hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToHaunt, true);
         }
+        else if (hauntedObject.GetComponent<HauntLog>()) {
+            ob_ref = new NetworkObjectReference(hauntedObject);
+            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
+            hauntedObject.GetComponent<HauntLog>().enabled = true;
+        }
 
 
         yield return null;
@@ -233,6 +238,9 @@ public class AbilityScript : NetworkBehaviour
                 hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
                 hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
             }
+            else if(hauntedObject.GetComponent<HauntLog>()){
+                hauntedObject.GetComponent<HauntLog>().enabled = false;
+            }
                 hauntedObject = hauntCollider.gameObject;
     
                 StartCoroutine(PerformHauntIn(hauntedObject));
@@ -258,6 +266,9 @@ public class AbilityScript : NetworkBehaviour
         if(hauntedObject.GetComponent<HauntMovementScript>()) {
             hauntedObject.GetComponent<HauntMovementScript>().enabled = false;
             hauntedObject.GetComponent<HauntMovementScript>().knockBackForce(dirToMouse, false);
+        }
+        else if(hauntedObject.GetComponent<HauntLog>()) {
+            hauntedObject.GetComponent<HauntLog>().enabled = false;
         }
 
         hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;
