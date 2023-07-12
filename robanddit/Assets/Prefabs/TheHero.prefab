@@ -250,8 +250,8 @@ MonoBehaviour:
   deccelAmount: 16
   horizontalDir: 0
   jumpForce: 25
-  jumpCutGravityMult: 5
-  fallGravityMult: 4
+  jumpCutGravityMult: 4
+  fallGravityMult: 2.5
   coyoteTime: 0.1
   maxFallSpeed: 30
   maxFloatSpeed: 7
