@@ -383,10 +383,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1496821989}
+  - component: {fileID: 1496821992}
+  - component: {fileID: 1496821996}
   - component: {fileID: 1496821990}
   - component: {fileID: 1496821991}
   - component: {fileID: 1496821993}
-  - component: {fileID: 1496821992}
   - component: {fileID: 1496821994}
   - component: {fileID: 1496821995}
   m_Layer: 6
@@ -469,6 +470,10 @@ MonoBehaviour:
   growthSpeed: 4.66
   maxHeight: 20
   minHeight: 1
+  initialPosition: {x: 0, y: 0, z: 0}
+  initialScale: {x: 0, y: 0, z: 0}
+  scaleChange: {x: 0, y: 0, z: 0}
+  positionChange: {x: 0, y: 0, z: 0}
 --- !u!212 &1496821993
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -510,8 +515,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6509434, g: 0.40837488, b: 0.40837488, a: 1}
+  m_Sprite: {fileID: -479407639, guid: df9012106c4ed16439d6805185f308f9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -568,6 +573,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1496821996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1496821988}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d44ce180bb5eff344a9ba128c36cf77f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialPosition: {x: 4.05, y: -2.67, z: 0}
+  initialScale: {x: 4.26703, y: 4.07291, z: 1}
 --- !u!1001 &1832859045
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -269,6 +269,7 @@ public class AbilityScript : NetworkBehaviour
         }
         else if(hauntedObject.GetComponent<HauntLog>()) {
             hauntedObject.GetComponent<HauntLog>().enabled = false;
+            hauntedObject.GetComponent<ReturnLogSize>().enabled = true;
         }
 
         hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;

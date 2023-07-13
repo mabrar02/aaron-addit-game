@@ -7,9 +7,9 @@ public class HauntLog : MonoBehaviour {
     [SerializeField] private float maxHeight = 20f;
     [SerializeField] private float minHeight = 2.5f;
 
-    private Vector3 initialPosition;
-    private Vector3 initialScale;
-    private Vector3 scaleChange, positionChange;
+    [HideInInspector] public Vector3 initialPosition;
+    [HideInInspector] public Vector3 initialScale;
+    [HideInInspector] public Vector3 scaleChange, positionChange;
     private Transform logTransform;
     private Transform playerTransform;
     private bool isAttached = true;
