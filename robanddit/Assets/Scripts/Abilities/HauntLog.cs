@@ -13,6 +13,12 @@ public class HauntLog : MonoBehaviour {
     private Transform logTransform;
     private Transform playerTransform;
     private bool isAttached = true;
+
+    [SerializeField] public AudioSource growthSound;
+    private bool isGrowing = false;
+
+    private float loopLength = 0f;
+    private bool loopCompleted = false;
     #endregion
 
     private void Start() {
@@ -29,6 +35,8 @@ public class HauntLog : MonoBehaviour {
         scaleChange = new Vector3(0.0f, newScale, 0.0f);
         positionChange = new Vector3(0.0f, newPos, 0.0f);
         Debug.Log(newScale + " " + newPos);
+
+        loopLength = growthSound.clip.length;
     }
 
     private void Update() {
@@ -36,10 +44,25 @@ public class HauntLog : MonoBehaviour {
         float verticalInput = Input.GetAxis("Vertical");
 
         if ((logTransform.localScale.y < minHeight && verticalInput < 0) || (logTransform.localScale.y > maxHeight && verticalInput > 0)) {
-
             return;
         }
         else {
+            if(verticalInput != 0) {
+                if(!isGrowing) {
+                    growthSound.Play();
+                    growthSound.loop = true;
+                    isGrowing = true;
+                }
+            }
+            else {
+                loopCompleted = growthSound.time >= loopLength - 0.25f;
+                if(loopCompleted) {
+                    growthSound.Stop();
+                    isGrowing = false;
+                    loopCompleted = false;
+                }
+            }
+
 
             if (isAttached) {
                 playerTransform.parent = null;

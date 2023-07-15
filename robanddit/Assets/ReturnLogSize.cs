@@ -10,6 +10,8 @@ public class ReturnLogSize : MonoBehaviour
     private Vector3 scaleChange, positionChange;
 
     public bool sizeReset = false;
+    private bool soundPlaying = false;
+    [SerializeField] private AudioSource returnSound;
 
     void Awake() {
         initialPosition = transform.localPosition;
@@ -17,14 +19,24 @@ public class ReturnLogSize : MonoBehaviour
     }
     void Start()
     {
-        scaleChange = GetComponent<HauntLog>().scaleChange;
-        positionChange = GetComponent<HauntLog>().positionChange;
+        scaleChange = GetComponent<HauntLog>().scaleChange/2;
+        positionChange = GetComponent<HauntLog>().positionChange/2;
         sizeReset = false;
+        returnSound.Play();
+        returnSound.loop = true;
+        soundPlaying = true;
     }
     void Update()
     {
+        if (!soundPlaying) {
+            returnSound.Play();
+            returnSound.loop = true;
+            soundPlaying = true;
+        }
         if (sizeReset) {
             sizeReset = false;
+            returnSound.Stop();
+            soundPlaying = false;
             this.enabled = false;
         }
         else if(transform.localScale.y > initialScale.y) {
