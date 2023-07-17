@@ -297,7 +297,7 @@ MonoBehaviour:
   originalColour: {r: 0, g: 0, b: 0, a: 0}
   hauntedColour: {r: 1, g: 0, b: 0, a: 0}
   hauntCheckSize: {x: 1.5, y: 1.5}
-  hauntDistanceLimit: 100
+  hauntDistanceLimit: 20
   hauntInSpeed: 0.15
   hauntOutSpeed: 0.15
   hauntDuration: 1.75

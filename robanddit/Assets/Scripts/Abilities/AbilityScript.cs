@@ -28,7 +28,7 @@ public class AbilityScript : NetworkBehaviour
    
     // Haunt related variables
     [SerializeField] private Vector2 hauntCheckSize     = new Vector2(1.5f,1.5f);
-    [SerializeField] private float   hauntDistanceLimit = 100;
+    [SerializeField] private float   hauntDistanceLimit = 20;
     [SerializeField] private float   hauntInSpeed       = 0.15f;
     [SerializeField] private float   hauntOutSpeed      = 0.15f;
     [SerializeField] private float   hauntDuration      = 1.75f;
@@ -78,8 +78,8 @@ public class AbilityScript : NetworkBehaviour
         if (!currentlyHaunting && !inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
              checkHauntIn();
         }
-        else if(!currentlyHaunting && inHauntObj && Input.GetButtonDown("Fire1") && inRange) {
-            checkHauntOut();
+        else if(!currentlyHaunting && inHauntObj && Input.GetButtonDown("Fire1")) {
+            checkHauntOut(inRange);
         }
 
         hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0);
@@ -220,7 +220,7 @@ public class AbilityScript : NetworkBehaviour
     //----------------------------------------------------------
     // checkHauntOut : 
     //----------------------------------------------------------
-    private void checkHauntOut() {
+    private void checkHauntOut(bool inRange) {
 
         //        hauntedObject.GetComponent<SpriteRenderer>().color = Color.white; // To be replaced
         //hauntCollider = Physics2D.OverlapBox(mousePos, hauntCheckSize, 0, 1<<7 /*Hauntable*/);
@@ -229,7 +229,7 @@ public class AbilityScript : NetworkBehaviour
 
         changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "Out");
 
-        if(hauntCollider && hauntCollider.CompareTag("Hauntable") ) {
+        if(hauntCollider && hauntCollider.CompareTag("Hauntable") && inRange) {
             hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;
 
             storedHauntMat = storedMat;

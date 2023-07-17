@@ -19,8 +19,8 @@ public class ReturnLogSize : MonoBehaviour
     }
     void Start()
     {
-        scaleChange = GetComponent<HauntLog>().scaleChange/2;
-        positionChange = GetComponent<HauntLog>().positionChange/2;
+        scaleChange = GetComponent<HauntLog>().scaleChange/4;
+        positionChange = GetComponent<HauntLog>().positionChange/4;
         sizeReset = false;
         returnSound.Play();
         returnSound.loop = true;
