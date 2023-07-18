@@ -168,7 +168,12 @@ public class AbilityScript : NetworkBehaviour
             changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
             hauntedObject.GetComponent<HauntLog>().enabled = true;
         }
+        else if (hauntedObject.GetComponent<HauntLamp>()) {
+            ob_ref = new NetworkObjectReference(hauntedObject);
+            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
 
+            hauntedObject.GetComponent<HauntLamp>().enabled = true;
+        }
 
         yield return null;
 
@@ -188,6 +193,8 @@ public class AbilityScript : NetworkBehaviour
                 break;
             case "Out":
                 gameObject.transform.parent.SetParent(null);
+                if (net_ob.GetComponent<HauntLog>()) net_ob.GetComponent<ReturnLogSize>().enabled = true;
+                if (net_ob.GetComponent<HauntLamp>()) net_ob.GetComponent<ReturnLampBrightness>().enabled = true;
                 net_ob.RemoveOwnership();
                 changeHauntParametersClientRpc(ob_ref, entry);
                 break;
@@ -241,6 +248,9 @@ public class AbilityScript : NetworkBehaviour
             else if(hauntedObject.GetComponent<HauntLog>()){
                 hauntedObject.GetComponent<HauntLog>().enabled = false;
             }
+            else if(hauntedObject.GetComponent<HauntLamp>()) {
+                hauntedObject.GetComponent<HauntLamp>().enabled = false;
+            }
                 hauntedObject = hauntCollider.gameObject;
     
                 StartCoroutine(PerformHauntIn(hauntedObject));
@@ -270,7 +280,9 @@ public class AbilityScript : NetworkBehaviour
         else if(hauntedObject.GetComponent<HauntLog>()) {
             hauntedObject.GetComponent<HauntLog>().enabled = false;
             hauntedObject.GetComponent<HauntLog>().growthSound.Stop();
-            hauntedObject.GetComponent<ReturnLogSize>().enabled = true;
+        }
+        else if (hauntedObject.GetComponent<HauntLamp>()) {
+            hauntedObject.GetComponent<HauntLamp>().enabled = false;
         }
 
         hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;
