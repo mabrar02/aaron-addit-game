@@ -173,6 +173,7 @@ public class AbilityScript : NetworkBehaviour
             changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
 
             hauntedObject.GetComponent<HauntLamp>().enabled = true;
+            hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, true);
         }
 
         yield return null;
@@ -250,6 +251,7 @@ public class AbilityScript : NetworkBehaviour
             }
             else if(hauntedObject.GetComponent<HauntLamp>()) {
                 hauntedObject.GetComponent<HauntLamp>().enabled = false;
+                hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, false);
             }
                 hauntedObject = hauntCollider.gameObject;
     
@@ -283,6 +285,7 @@ public class AbilityScript : NetworkBehaviour
         }
         else if (hauntedObject.GetComponent<HauntLamp>()) {
             hauntedObject.GetComponent<HauntLamp>().enabled = false;
+            hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, false);
         }
 
         hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;

@@ -9,6 +9,8 @@ public class HauntLamp : MonoBehaviour {
     private float targetInnerRadius;
     private float targetOuterRadius;
 
+    private Rigidbody2D rb;
+
     void Awake() {
         lampLight = GetComponent<Light2D>();
         targetInnerRadius = lampLight.pointLightInnerRadius * lightBoost;
@@ -19,12 +21,28 @@ public class HauntLamp : MonoBehaviour {
         StartCoroutine(GrowLight());
     }
 
-    void Start() {
-
-
-    }
-
-    void Update() {
+    public void knockBackForce(Vector2 playerVector, bool hauntIn) {
+        if (rb) {
+            switch (hauntIn) {
+                case true:
+                    rb.AddForce(new Vector2(playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    break;
+                case false:
+                    rb.AddForce(new Vector2(-playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    break;
+            }
+        }
+        else {
+            rb = GetComponent<Rigidbody2D>();
+            switch (hauntIn) {
+                case true:
+                    rb.AddForce(new Vector2(playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    break;
+                case false:
+                    rb.AddForce(new Vector2(-playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    break;
+            }
+        }
     }
 
     public IEnumerator GrowLight() {
