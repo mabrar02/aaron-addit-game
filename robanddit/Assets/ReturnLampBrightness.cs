@@ -9,46 +9,45 @@ public class ReturnLampBrightness : MonoBehaviour {
     private bool lightReset = false;
     private Light2D lampLight;
     private HauntLamp lightScript;
+    private float targetInnerRadius;
+    private float targetOuterRadius;
 
     void Awake() {
         lampLight = GetComponent<Light2D>();
         lightScript = GetComponent<HauntLamp>();
-        initialInnerRadius = lampLight.pointLightInnerRadius;
-        initialOuterRadius = lampLight.pointLightOuterRadius;
+        lightReset = false;
+        targetInnerRadius = lampLight.pointLightInnerRadius;
+        targetOuterRadius = lampLight.pointLightOuterRadius;
+    }
+    void OnEnable() {
+        StartCoroutine(ShrinkLight());
     }
 
     void Start() {
-        lightReset = false;
-       /* StartCoroutine(ShrinkLight());*/
-        Debug.Log(initialInnerRadius + " " + initialOuterRadius);
-        Debug.Log(lampLight.pointLightInnerRadius + " " + lampLight.pointLightOuterRadius);
 
     }
 
     void Update() {
-        /*        if (lightReset) {
-                    lightReset = false;
-                    this.enabled = false;
-                }*/
-        lampLight.pointLightInnerRadius = 1;
-        lampLight.pointLightOuterRadius = 5;
-        this.enabled = false;
+        if (lightReset) {
+            lightReset = false;
+            this.enabled = false;
+        }
     }
 
-/*    private IEnumerator ShrinkLight() {
-        float targetInnerRadius = initialInnerRadius;
-        float targetOuterRadius = initialOuterRadius;
+    private IEnumerator ShrinkLight() {
+
 
         while (lampLight.pointLightInnerRadius >= targetInnerRadius || lampLight.pointLightOuterRadius >= targetOuterRadius) {
-            if (lampLight.pointLightInnerRadius > targetInnerRadius) {
+            if (lampLight.pointLightInnerRadius >= targetInnerRadius) {
                 lampLight.pointLightInnerRadius -= 0.25f;
             }
-            if (lampLight.pointLightOuterRadius > targetOuterRadius) {
+            if (lampLight.pointLightOuterRadius >= targetOuterRadius) {
                 lampLight.pointLightOuterRadius -= 0.25f;
             }
             yield return null;
         }
 
         lightReset = true;
-    }*/
+        yield return null;
+    }
 }
