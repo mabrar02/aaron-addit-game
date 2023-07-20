@@ -175,6 +175,12 @@ public class AbilityScript : NetworkBehaviour
             hauntedObject.GetComponent<HauntLamp>().enabled = true;
             hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, true);
         }
+        else if(hauntedObject.GetComponent<HauntPlatform>()) {
+            ob_ref = new NetworkObjectReference(hauntedObject);
+            changeHauntOwnershipServerRpc(OwnerClientId, ob_ref, "In");
+
+            hauntedObject.GetComponent<HauntPlatform>().enabled = true;
+        }
 
         yield return null;
 
@@ -253,6 +259,9 @@ public class AbilityScript : NetworkBehaviour
                 hauntedObject.GetComponent<HauntLamp>().enabled = false;
                 hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, false);
             }
+            else if(hauntedObject.GetComponent<HauntPlatform>()) {
+                hauntedObject.GetComponent<HauntPlatform>().enabled = false;
+            }
                 hauntedObject = hauntCollider.gameObject;
     
                 StartCoroutine(PerformHauntIn(hauntedObject));
@@ -286,6 +295,9 @@ public class AbilityScript : NetworkBehaviour
         else if (hauntedObject.GetComponent<HauntLamp>()) {
             hauntedObject.GetComponent<HauntLamp>().enabled = false;
             hauntedObject.GetComponent<HauntLamp>().knockBackForce(dirToMouse, false);
+        }
+        else if(hauntedObject.GetComponent<HauntPlatform>()) {
+            hauntedObject.GetComponent<HauntPlatform>().enabled = false;
         }
 
         hauntedObject.GetComponent<SpriteRenderer>().material = storedHauntMat;

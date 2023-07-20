@@ -64,7 +64,7 @@ public class HauntMovementScript : MonoBehaviour
         PollJumpMechanic();
     }
 
-   
+
     //----------------------------------------------------------
     // Movement type methods
     //----------------------------------------------------------

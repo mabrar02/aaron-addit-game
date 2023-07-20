@@ -8,6 +8,7 @@ public class HauntLamp : MonoBehaviour {
 
     private float targetInnerRadius;
     private float targetOuterRadius;
+    [SerializeField] private float knockBack;
 
     private Rigidbody2D rb;
 
@@ -25,10 +26,10 @@ public class HauntLamp : MonoBehaviour {
         if (rb) {
             switch (hauntIn) {
                 case true:
-                    rb.AddForce(new Vector2(playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    rb.AddForce(new Vector2(playerVector.x * knockBack, knockBack), ForceMode2D.Impulse);
                     break;
                 case false:
-                    rb.AddForce(new Vector2(-playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    rb.AddForce(new Vector2(-playerVector.x * knockBack, knockBack), ForceMode2D.Impulse);
                     break;
             }
         }
@@ -36,10 +37,10 @@ public class HauntLamp : MonoBehaviour {
             rb = GetComponent<Rigidbody2D>();
             switch (hauntIn) {
                 case true:
-                    rb.AddForce(new Vector2(playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    rb.AddForce(new Vector2(playerVector.x * 20, 20), ForceMode2D.Impulse);
                     break;
                 case false:
-                    rb.AddForce(new Vector2(-playerVector.x * 100, 100), ForceMode2D.Impulse);
+                    rb.AddForce(new Vector2(-playerVector.x * 20, 20), ForceMode2D.Impulse);
                     break;
             }
         }
